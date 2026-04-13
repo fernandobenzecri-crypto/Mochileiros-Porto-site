@@ -1,0 +1,253 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId} (Firebase Auth UID)
+    // Fields:
+    //   - name: string (required, 1-100 chars)
+    //   - email: string (required, email format, < 100 chars)
+    //   - role: string (required, 'user' or 'admin')
+    //   - is_vip: bool (optional)
+    //   - mochis: number (optional)
+    //   - level: number (optional)
+    //   - created_at: timestamp (optional)
+    //
+    // Collection: leads
+    // Document ID: {leadId} (Auto-generated)
+    // Fields:
+    //   - name: string (required, 1-200 chars)
+    //   - email: string (required, email format, < 100 chars)
+    //   - whatsapp: string (optional, < 30 chars)
+    //   - interest: string (optional, < 100 chars)
+    //   - message: string (optional, < 1000 chars)
+    //   - created_at: timestamp (optional)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (request.auth.token.email == "fernandobenzecri@gmail.com" && request.auth.token.email_verified == true ||
+         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'));
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.size() < 100 && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidUrl(url) {
+      return url is string && url.size() < 500 && (url.matches("^https://.*") || url.matches("^http://.*"));
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function fieldUnchanged(field) {
+      return !(field in request.resource.data) || request.resource.data[field] == resource.data[field];
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidUser(data) {
+      let allowedFields = [
+        'uid', 'name', 'email', 'whatsapp', 'originCity', 'neighborhood', 'role', 
+        'tipoMembro', 'is_vip', 'codigoVip', 'referralCode', 'referredBy', 'mochis', 
+        'lastLoginDate', 'monthlyLoginCount', 'monthlyShareCount', 'profileCompleted', 
+        'emailConfirmed', 'points', 'metaAtual', 'indicacoesConfirmadas', 
+        'membrosAcompanhados', 'missaoSemanal', 'utilizacoesMes', 'address', 
+        'kitStatus', 'kitShippedAt', 'created_at', 'plan_type', 'vip_plan', 
+        'last_payment_status', 'ranking_position', 'level', 'badges', 'stripe_customer_id'
+      ];
+      return data.keys().hasOnly(allowedFields) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.email is string && isValidEmail(data.email) &&
+             data.role in ['user', 'admin'] &&
+             (data.tipoMembro == null || data.tipoMembro in ['user', 'admin', 'embaixador']) &&
+             (data.mochis == null || data.mochis is number) &&
+             (data.level == null || data.level is number) &&
+             (data.is_vip == null || data.is_vip is bool);
+    }
+
+    function isValidLead(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() < 200 &&
+             data.email is string && isValidEmail(data.email) &&
+             (data.whatsapp == null || (data.whatsapp is string && data.whatsapp.size() < 30)) &&
+             (data.interest == null || (data.interest is string && data.interest.size() < 100)) &&
+             (data.message == null || (data.message is string && data.message.size() < 1000));
+    }
+
+    function isValidViagem(data) {
+      return data.titulo is string && data.titulo.size() > 0 && data.titulo.size() < 200 &&
+             data.destino is string && data.destino.size() > 0 && data.destino.size() < 200 &&
+             data.precoPublico is number && data.precoPublico >= 0 &&
+             data.ativo is bool &&
+             (data.descricao == null || (data.descricao is string && data.descricao.size() < 5000)) &&
+             (data.imagemUrl == null || isValidUrl(data.imagemUrl));
+    }
+
+    function isValidEvento(data) {
+      return data.titulo is string && data.titulo.size() > 0 && data.titulo.size() < 200 &&
+             data.tipo in ['presencial', 'online', 'toca'] &&
+             data.ativo is bool &&
+             (data.descricao == null || (data.descricao is string && data.descricao.size() < 5000)) &&
+             (data.imagemUrl == null || isValidUrl(data.imagemUrl));
+    }
+
+    function isValidUsage(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.parceiroId is string &&
+             data.mes is string && data.mes.matches("^\\d{4}-\\d{2}$") &&
+             (data.descontoAplicado == null || (data.descontoAplicado is string && data.descontoAplicado.size() < 500));
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      
+      allow create: if isAuthenticated() && 
+                    isOwner(userId) && 
+                    isValidUser(request.resource.data) &&
+                    request.resource.data.role == 'user' &&
+                    (request.resource.data.mochis == null || request.resource.data.mochis == 0) &&
+                    (request.resource.data.level == null || request.resource.data.level == 1) &&
+                    (request.resource.data.is_vip == null || request.resource.data.is_vip == false);
+
+      allow update: if isAdmin() || (
+        isOwner(userId) && 
+        isValidUser(request.resource.data) &&
+        // Protect sensitive fields from self-update
+        fieldUnchanged('role') &&
+        fieldUnchanged('mochis') &&
+        fieldUnchanged('level') &&
+        fieldUnchanged('is_vip') &&
+        fieldUnchanged('tipoMembro') &&
+        fieldUnchanged('created_at') &&
+        fieldUnchanged('stripe_customer_id') &&
+        fieldUnchanged('referralCode') &&
+        fieldUnchanged('referredBy') &&
+        fieldUnchanged('indicadoPor')
+      );
+
+      match /point_history/{historyId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isAdmin();
+      }
+    }
+
+    match /leads/{leadId} {
+      allow read: if isAdmin();
+      allow create: if isValidLead(request.resource.data) &&
+                    hasOnlyAllowedFields(['name', 'email', 'whatsapp', 'interest', 'message', 'created_at']);
+      allow update, delete: if isAdmin();
+    }
+
+    match /partners/{partnerId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /usages/{usageId} {
+      allow read: if isAdmin() || (
+        isAuthenticated() && 
+        exists(/databases/$(database)/documents/partners/$(resource.data.parceiroId)) &&
+        get(/databases/$(database)/documents/partners/$(resource.data.parceiroId)).data.loginEmail == request.auth.token.email
+      );
+      allow create: if isAuthenticated() && isValidUsage(request.resource.data);
+      allow update, delete: if isAdmin();
+    }
+
+    match /bookings/{bookingId} {
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.user_id == request.auth.uid);
+      allow create: if isAuthenticated() && 
+                    request.resource.data.user_id == request.auth.uid &&
+                    request.resource.data.status == 'pending' &&
+                    request.resource.data.amount is number && request.resource.data.amount >= 0;
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /viagens/{docId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidViagem(request.resource.data);
+    }
+
+    match /trips/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /eventos/{docId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidEvento(request.resource.data);
+    }
+
+    match /events/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /presencas/{docId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated() && 
+                    request.resource.data.userId == request.auth.uid &&
+                    request.resource.data.status == 'confirmado';
+      allow update, delete: if isAdmin();
+    }
+
+    match /candidaturas_embaixador/{applicationId} {
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+      allow create: if isAuthenticated() && 
+                    request.resource.data.userId == request.auth.uid &&
+                    request.resource.data.status == 'pendente';
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /settings/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /toca_meetings/{meetingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /mochi_history/{historyId} {
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    match /referrals/{referralId} {
+      allow read: if isAuthenticated() && (resource.data.referrerId == request.auth.uid || resource.data.referredId == request.auth.uid || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    match /vipCodes/{codigoVip} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

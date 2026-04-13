@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /membro
+Disallow: /parceiro
+Disallow: /api/
+
+Sitemap: https://mochileirosporto.com/sitemap.xml
+
+# WhatsApp, Instagram, Facebook crawlers
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /

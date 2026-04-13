@@ -1,0 +1,362 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A member of the Mochileiros Porto community",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name of the user" },
+        "email": { "type": "string", "format": "email", "description": "Email address" },
+        "role": { "type": "string", "enum": ["user", "admin"], "description": "User role" },
+        "tipoMembro": { "type": "string", "enum": ["user", "admin", "embaixador"], "description": "Type of member" },
+        "is_vip": { "type": "boolean", "description": "Whether the user is a VIP member" },
+        "plan_type": { "type": "string", "enum": ["explorador", "mochileiro", "trimestral", "semestral", "anual", "embaixador_gratis"], "description": "VIP plan type" },
+        "vip_plan": { "type": "string", "description": "Display name of the VIP plan" },
+        "codigoVip": { "type": "string", "description": "Unique 8-character VIP code" },
+        "referralCode": { "type": "string", "description": "Unique referral code for gamification" },
+        "referredBy": { "type": "string", "description": "Referral code of the user who invited this user" },
+        "mochis": { "type": "number", "description": "Gamification points (Mochis)" },
+        "lastLoginDate": { "type": "string", "description": "Last login date (YYYY-MM-DD)" },
+        "monthlyLoginCount": { "type": "number", "description": "Number of logins in the current month" },
+        "monthlyShareCount": { "type": "number", "description": "Number of referral link shares in the current month" },
+        "profileCompleted": { "type": "boolean", "description": "Whether the profile is 100% complete" },
+        "emailConfirmed": { "type": "boolean", "description": "Whether the email has been confirmed" },
+        "points": { "type": "number", "description": "Ambassador points" },
+        "metaAtual": { "type": "string", "enum": ["basica", "prata", "ouro", "diamante"], "description": "Current ambassador goal level" },
+        "indicacoesConfirmadas": { "type": "number" },
+        "membrosAcompanhados": { "type": "number" },
+        "missaoSemanal": { "type": "object", "description": "Weekly mission status" },
+        "utilizacoesMes": { "type": "object", "description": "Map of partnerId to usage count for the current month" },
+        "address": {
+          "type": "object",
+          "properties": {
+            "street": { "type": "string" },
+            "number": { "type": "string" },
+            "postalCode": { "type": "string" },
+            "city": { "type": "string" }
+          }
+        },
+        "kitStatus": { "type": "string", "enum": ["pending", "shipped", "delivered"], "description": "Status of the physical kit shipment" },
+        "kitShippedAt": { "type": "string", "format": "date-time", "description": "When the kit was shipped" },
+        "created_at": { "type": "string", "format": "date-time", "description": "When the user registered" }
+      },
+      "required": ["name", "email", "role"]
+    },
+    "AmbassadorApplication": {
+      "title": "Ambassador Application",
+      "description": "Application to become a community ambassador",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "whatsapp": { "type": "string" },
+        "bairro": { "type": "string" },
+        "tempoPortugal": { "type": "string" },
+        "tempoMochileiros": { "type": "string" },
+        "excursoesParticipadas": { "type": "number" },
+        "motivo": { "type": "string" },
+        "contribuicao": { "type": "string" },
+        "horasSemanais": { "type": "string" },
+        "experiencia": { "type": "string" },
+        "status": { "type": "string", "enum": ["pendente", "aprovada", "rejeitada", "conversa"] },
+        "userId": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "whatsapp", "motivo"]
+    },
+    "Partner": {
+      "title": "Partner",
+      "description": "A business partner of the community",
+      "type": "object",
+      "properties": {
+        "nome": { "type": "string", "description": "Name of the partner" },
+        "categoria": { "type": "string", "description": "Category (e.g., Restaurante, Saúde)" },
+        "beneficioVip": { "type": "string", "description": "Description of the VIP benefit" },
+        "limiteUsosMensal": { "type": "number", "description": "Monthly usage limit per member" },
+        "loginEmail": { "type": "string", "format": "email", "description": "Login email for the partner dashboard" },
+        "loginSenha": { "type": "string", "description": "Login password for the partner dashboard" }
+      },
+      "required": ["nome", "categoria", "beneficioVip"]
+    },
+    "Usage": {
+      "title": "Usage",
+      "description": "A record of a VIP benefit usage",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "UID of the member" },
+        "userName": { "type": "string", "description": "Name of the member" },
+        "parceiroId": { "type": "string", "description": "ID of the partner" },
+        "parceiroNome": { "type": "string", "description": "Name of the partner" },
+        "data": { "type": "string", "description": "Date of usage" },
+        "hora": { "type": "string", "description": "Time of usage" },
+        "descontoAplicado": { "type": "string", "description": "Description of the discount applied" },
+        "mes": { "type": "string", "description": "Month of usage (YYYY-MM)" }
+      },
+      "required": ["userId", "parceiroId", "data", "mes"]
+    },
+    "Lead": {
+      "title": "Lead",
+      "description": "A potential member or partner interested in the community",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Name of the lead" },
+        "email": { "type": "string", "format": "email", "description": "Email address" },
+        "whatsapp": { "type": "string", "description": "WhatsApp contact number" },
+        "interest": { "type": "string", "description": "Area of interest (e.g., Guide, Partnership)" },
+        "message": { "type": "string", "description": "Optional message from the lead" },
+        "created_at": { "type": "string", "format": "date-time", "description": "When the lead was captured" }
+      },
+      "required": ["name", "email"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "A trip reservation",
+      "type": "object",
+      "properties": {
+        "user_id": { "type": "string", "description": "UID of the user who booked" },
+        "trip_id": { "type": "string", "description": "ID of the trip" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "cancelled"], "description": "Booking status" },
+        "amount": { "type": "number", "description": "Amount paid" },
+        "stripe_session_id": { "type": "string", "description": "Stripe session ID for tracking" },
+        "created_at": { "type": "string", "format": "date-time", "description": "When the booking was made" }
+      },
+      "required": ["trip_id", "status", "amount"]
+    },
+    "Trip": {
+      "title": "Trip",
+      "description": "A community trip or excursion",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "date": { "type": "string" },
+        "price": { "type": "string" },
+        "status": { "type": "string", "enum": ["Confirmado", "Vagas Limitadas", "Esgotado"] },
+        "type": { "type": "string", "enum": ["Excursão", "Premium"] },
+        "poster": { "type": "string" },
+        "spotsLeft": { "type": "number" },
+        "description": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "date", "price", "status"]
+    },
+    "Event": {
+      "title": "Event",
+      "description": "A community event",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "location": { "type": "string" },
+        "price": { "type": "string" },
+        "type": { "type": "string", "enum": ["Presencial", "Online"] },
+        "description": { "type": "string" },
+        "image": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "date", "location", "price"]
+    },
+    "TocaMeeting": {
+      "title": "Toca Meeting",
+      "description": "Monthly welcome meeting at Toca dos Mochileiros",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "participants": { "type": "array", "items": { "type": "string" }, "description": "List of user UIDs who confirmed presence" },
+        "hosts": { "type": "array", "items": { "type": "string" }, "description": "List of ambassador UIDs who confirmed as hosts" },
+        "completed": { "type": "boolean", "description": "Whether the meeting has already happened" }
+      }
+    },
+    "PointHistory": {
+      "title": "Point History",
+      "description": "Record of points awarded to an ambassador",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "points": { "type": "number" },
+        "description": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Viagem": {
+      "title": "Viagem",
+      "description": "A community trip or excursion managed via CMS",
+      "type": "object",
+      "properties": {
+        "titulo": { "type": "string" },
+        "descricao": { "type": "string" },
+        "destino": { "type": "string" },
+        "tipo": { "type": "string", "enum": ["excursao", "premium"] },
+        "dataPartida": { "type": "string", "format": "date-time" },
+        "dataRetorno": { "type": "string", "format": "date-time" },
+        "precoPublico": { "type": "number" },
+        "precoVip": { "type": "number" },
+        "vagasTotal": { "type": "number" },
+        "vagasDisponiveis": { "type": "number" },
+        "incluiTransporte": { "type": "boolean" },
+        "incluiHospedagem": { "type": "boolean" },
+        "incluiAlimentacao": { "type": "boolean" },
+        "imagemUrl": { "type": "string" },
+        "ativo": { "type": "boolean" },
+        "criadoEm": { "type": "string", "format": "date-time" },
+        "atualizadoEm": { "type": "string", "format": "date-time" }
+      },
+      "required": ["titulo", "destino", "tipo", "dataPartida", "precoPublico", "vagasTotal"]
+    },
+    "Evento": {
+      "title": "Evento",
+      "description": "A community event managed via CMS",
+      "type": "object",
+      "properties": {
+        "titulo": { "type": "string" },
+        "descricao": { "type": "string" },
+        "tipo": { "type": "string", "enum": ["presencial", "online", "toca"] },
+        "data": { "type": "string", "format": "date-time" },
+        "horario": { "type": "string" },
+        "local": { "type": "string" },
+        "linkOnline": { "type": "string" },
+        "imagemUrl": { "type": "string" },
+        "gratuito": { "type": "boolean" },
+        "precoPublico": { "type": "number" },
+        "vagasTotal": { "type": "number" },
+        "vagasDisponiveis": { "type": "number" },
+        "embaixadoresAnfitrioes": { "type": "array", "items": { "type": "string" } },
+        "ativo": { "type": "boolean" },
+        "criadoEm": { "type": "string", "format": "date-time" },
+        "atualizadoEm": { "type": "string", "format": "date-time" }
+      },
+      "required": ["titulo", "tipo", "data", "horario", "vagasTotal"]
+    },
+    "Presenca": {
+      "title": "Presenca",
+      "description": "Event attendance confirmation",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "eventoId": { "type": "string" },
+        "eventoTitulo": { "type": "string" },
+        "confirmedAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["confirmado"] }
+      },
+      "required": ["userId", "eventoId", "status"]
+    },
+    "MochiHistory": {
+      "title": "Mochi History",
+      "description": "Record of Mochis earned or spent",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "type": { "type": "string", "description": "Type of action (e.g., REFERRAL, LOGIN, VIP)" },
+        "amount": { "type": "number" },
+        "description": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "type", "amount", "timestamp"]
+    },
+    "Referral": {
+      "title": "Referral",
+      "description": "Record of a successful referral",
+      "type": "object",
+      "properties": {
+        "referrerId": { "type": "string" },
+        "referredId": { "type": "string" },
+        "type": { "type": "string", "enum": ["SIGNUP", "VIP", "TRIP", "PARTNER"] },
+        "mochisEarned": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["referrerId", "referredId", "type", "mochisEarned", "timestamp"]
+    },
+    "MonthlyMission": {
+      "title": "Monthly Mission",
+      "description": "The current monthly mission for the community",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "mochisBonus": { "type": "number" },
+        "endDate": { "type": "string", "format": "date-time" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["title", "description", "mochisBonus", "endDate", "active"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/users/{userId}/point_history/{historyId}": {
+      "schema": "PointHistory",
+      "description": "History of points for an ambassador"
+    },
+    "/leads/{leadId}": {
+      "schema": "Lead",
+      "description": "Captured leads"
+    },
+    "/bookings/{bookingId}": {
+      "schema": "Booking",
+      "description": "Trip bookings"
+    },
+    "/partners/{partnerId}": {
+      "schema": "Partner",
+      "description": "Business partners"
+    },
+    "/usages/{usageId}": {
+      "schema": "Usage",
+      "description": "VIP benefit usage records"
+    },
+    "/candidaturas_embaixador/{applicationId}": {
+      "schema": "AmbassadorApplication",
+      "description": "Applications for the ambassador program"
+    },
+    "/viagens/{viagemId}": {
+      "schema": "Viagem",
+      "description": "Trips managed via CMS"
+    },
+    "/eventos/{eventoId}": {
+      "schema": "Evento",
+      "description": "Events managed via CMS"
+    },
+    "/presencas/{presencaId}": {
+      "schema": "Presenca",
+      "description": "Event attendance records"
+    },
+    "/trips/{tripId}": {
+      "schema": "Trip",
+      "description": "Available trips"
+    },
+    "/events/{eventId}": {
+      "schema": "Event",
+      "description": "Community events"
+    },
+    "/settings/toca_meeting": {
+      "schema": "TocaMeeting",
+      "description": "Configuration for the next Toca meeting"
+    },
+    "/settings/monthly_mission": {
+      "schema": "MonthlyMission",
+      "description": "The current monthly mission configuration"
+    },
+    "/toca_meetings/{meetingId}": {
+      "schema": "TocaMeeting",
+      "description": "Historical records of Toca meetings"
+    },
+    "/mochi_history/{historyId}": {
+      "schema": "MochiHistory",
+      "description": "Global history of mochi transactions"
+    },
+    "/referrals/{referralId}": {
+      "schema": "Referral",
+      "description": "Records of referrals"
+    },
+    "/vipCodes/{codigoVip}": {
+      "description": "Mapping of VIP codes to user IDs for secure verification",
+      "properties": {
+        "userId": { "type": "string" },
+        "active": { "type": "boolean" }
+      }
+    }
+  }
+}
