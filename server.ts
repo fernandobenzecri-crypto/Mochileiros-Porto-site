@@ -10,13 +10,13 @@ import admin from "firebase-admin";
 import Stripe from "stripe";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import firebaseConfig from "./firebase-applet-config.json";
+import firebaseConfig from "./firebase-applet-config.json" with { type: "json" };
 import { 
   sendWelcomeEmail, 
   sendVipConfirmationEmail, 
   sendKitShippingEmail, 
   sendAmbassadorApplicationEmail 
-} from "./src/services/emailService.js";
+} from "./src/services/emailService.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

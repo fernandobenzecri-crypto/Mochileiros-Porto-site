@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { BRAND } from '../constants';
+import { BRAND } from '../constants.ts';
 
 let resendInstance: Resend | null = null;
 

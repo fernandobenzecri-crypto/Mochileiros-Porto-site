@@ -82,7 +82,7 @@ export default function App() {
             <Suspense fallback={<PageLoader />}>
               <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/sobre" element={<About />} />
+              <Route path="/sobre-nos" element={<About />} />
               <Route path="/viagens" element={<Trips />} />
               <Route path="/clube-vip" element={<VipClub />} />
               <Route path="/assessoria" element={<Advisory />} />

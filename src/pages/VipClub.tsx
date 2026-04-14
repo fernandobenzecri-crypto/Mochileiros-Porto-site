@@ -1,10 +1,11 @@
 import { useState, FormEvent } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
-import { BRAND } from "../constants";
+import { BRAND, GALLERY_IMAGES } from "../constants";
 import { ArrowRight, CheckCircle2, Star, Zap, Shield, Users, Gift, Sparkles, Crown, Gem, Rocket, Heart, HelpCircle, X, TrendingUp, Lock, ShieldCheck, CreditCard, MessageCircle, Package, Clock, Loader2 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import SEOHead from "../components/SEOHead";
+import SafeImage from "../components/SafeImage";
 import { trackEvent } from "../analytics";
 
 export default function VipClub() {
@@ -198,12 +199,11 @@ export default function VipClub() {
           style={{ y: y1 }}
           className="absolute inset-0 z-0 opacity-40"
         >
-          <img 
-            src="https://picsum.photos/seed/vip-hero-3/1920/1080" 
+          <SafeImage 
+            src={GALLERY_IMAGES.ogImage} 
             className="w-full h-full object-cover" 
             alt="VIP Club" 
-            referrerPolicy="no-referrer" 
-            loading="lazy"
+            fallbackSrc="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1920&q=80"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-navy/20 via-brand-navy/60 to-brand-navy" />
         </motion.div>
@@ -221,7 +221,7 @@ export default function VipClub() {
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-8 flex flex-col items-center"
           >
-            <img src={BRAND.logo} alt="Logo" className="w-32 h-32 object-contain mb-4" referrerPolicy="no-referrer" />
+            <SafeImage src={BRAND.logo} alt="Logo" className="w-32 h-32 object-contain mb-4" />
             <div className="inline-flex items-center gap-3 px-6 py-2 bg-brand-yellow/20 text-brand-yellow rounded-full text-[10px] font-black uppercase tracking-[0.4em] border border-brand-yellow/30 backdrop-blur-xl">
               <Crown size={14} className="fill-brand-yellow" /> O Próximo Nível da sua Jornada
             </div>
@@ -264,7 +264,7 @@ export default function VipClub() {
               </a>
               <div className="flex -space-x-4">
                 {[1, 2, 3, 4].map(i => (
-                  <img key={i} src={`https://i.pravatar.cc/100?img=${i + 10}`} className="w-12 h-12 rounded-full border-4 border-brand-navy shadow-2xl" alt="Member" loading="lazy" />
+                  <SafeImage key={i} src={`https://i.pravatar.cc/100?img=${i + 10}`} className="w-12 h-12 rounded-full border-4 border-brand-navy shadow-2xl" alt="Member" />
                 ))}
                 <div className="w-12 h-12 rounded-full bg-brand-yellow text-brand-dark flex items-center justify-center text-xs font-black border-4 border-brand-navy shadow-2xl">
                   +500
@@ -660,11 +660,10 @@ export default function VipClub() {
             className="bg-white p-12 md:p-16 rounded-[60px] flex flex-col md:flex-row items-center gap-12 shadow-3xl shadow-brand-dark/20 relative overflow-hidden"
           >
             <div className="absolute top-0 left-0 w-2 h-full bg-brand-yellow" />
-            <img 
+            <SafeImage 
               src="https://i.pravatar.cc/200?u=anapaula" 
               alt="Ana Paula" 
               className="w-32 h-32 md:w-48 md:h-48 rounded-[40px] shadow-2xl border-4 border-brand-gray"
-              loading="lazy"
             />
             <div className="space-y-6 text-center md:text-left">
               <p className="text-2xl md:text-3xl text-brand-dark font-medium leading-relaxed italic">
@@ -750,7 +749,7 @@ export default function VipClub() {
               >
                 <div className="relative z-10 space-y-8">
                   <div className="flex items-center gap-6">
-                    <img src={t.img} className="w-24 h-24 rounded-full border-4 border-brand-gray shadow-2xl" alt={t.name} loading="lazy" />
+                    <SafeImage src={t.img} className="w-24 h-24 rounded-full border-4 border-brand-gray shadow-2xl" alt={t.name} />
                     <div>
                       <div className="text-2xl font-display font-black text-brand-dark uppercase tracking-tighter">{t.name}</div>
                       <div className="text-[10px] font-black uppercase tracking-[0.3em] text-brand-orange">{t.role}</div>

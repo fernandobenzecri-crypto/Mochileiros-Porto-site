@@ -5,6 +5,9 @@ import { ArrowRight, Calendar, MapPin, Users, Star, Camera, Music, Utensils, Zap
 import { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import SEOHead from "../components/SEOHead";
+import SafeImage from "../components/SafeImage";
+import HorizontalEventCard from "../components/HorizontalEventCard";
+import EventFormatCard from "../components/EventFormatCard";
 import { db, handleFirestoreError, OperationType } from "../firebase";
 import { collection, query, orderBy, onSnapshot, doc } from "firebase/firestore";
 
@@ -115,11 +118,10 @@ export default function Events() {
           style={{ y: y1 }}
           className="absolute inset-0 z-0 opacity-40"
         >
-          <img 
+          <SafeImage 
             src="https://picsum.photos/seed/events-hero-3/1920/1080" 
             className="w-full h-full object-cover" 
             alt="Events" 
-            referrerPolicy="no-referrer" 
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-navy/20 via-brand-navy/60 to-brand-navy" />
         </motion.div>
@@ -232,45 +234,13 @@ export default function Events() {
               )}
 
               {events.map((event) => (
-                <motion.div 
+                <HorizontalEventCard
                   key={event.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="bg-white p-12 rounded-[60px] shadow-3xl shadow-brand-dark/5 flex flex-col md:flex-row gap-12 group hover:shadow-brand-green/10 transition-all duration-500"
-                >
-                  <div className="w-full md:w-48 h-48 bg-brand-gray rounded-[40px] flex flex-col items-center justify-center text-center p-6 group-hover:bg-brand-green group-hover:text-white transition-all duration-500">
-                    <div className="text-4xl font-display font-black leading-none">{formatDate(event.data).split(' ')[0]}</div>
-                    <div className="text-[10px] font-black uppercase tracking-widest mt-2 opacity-60">{formatDate(event.data).split(' ').slice(1).join(' ')}</div>
-                    <div className="w-8 h-1 bg-brand-green group-hover:bg-white mt-4 rounded-full" />
-                  </div>
-                  <div className="flex-grow space-y-6">
-                    <div className="space-y-2">
-                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand-navy/10 text-brand-navy rounded-full text-[8px] font-black uppercase tracking-widest">
-                        {event.tipo}
-                      </div>
-                      <h3 className="text-4xl font-display font-black text-brand-dark uppercase tracking-tighter leading-none">{event.titulo}</h3>
-                    </div>
-                    <div className="flex flex-wrap gap-6">
-                      <div className="flex items-center gap-2 text-gray-400 font-bold text-sm">
-                        <MapPin size={16} className="text-brand-green" /> {event.tipo === 'online' ? event.linkOnline : event.local}
-                      </div>
-                      <div className="flex items-center gap-2 text-gray-400 font-bold text-sm">
-                        <Zap size={16} className="text-brand-orange" /> {event.horario}
-                      </div>
-                    </div>
-                    <p className="text-gray-500 font-medium tracking-tight line-clamp-2">{event.descricao}</p>
-                    <div className="pt-4 flex items-center justify-between">
-                      <div className="text-2xl font-display font-black text-brand-dark">{formatPrice(event.precoPublico)}</div>
-                      <a 
-                        href={BRAND.whatsappLink}
-                        className="px-8 py-4 bg-brand-dark text-white rounded-full font-black uppercase tracking-widest text-[10px] hover:bg-brand-green transition-all"
-                      >
-                        Garantir Vaga
-                      </a>
-                    </div>
-                  </div>
-                </motion.div>
+                  event={event}
+                  formatDate={formatDate}
+                  formatPrice={formatPrice}
+                  whatsappLink={BRAND.whatsappLink}
+                />
               ))}
             </div>
           </div>
@@ -341,35 +311,15 @@ export default function Events() {
                 features: ["Pitch", "Parcerias", "Crescimento"]
               }
             ].map((type, idx) => (
-              <motion.div 
-                key={idx} 
-                variants={itemVariants}
-                whileHover={{ y: -20 }}
-                className="group p-12 bg-brand-gray rounded-[60px] border border-gray-100 shadow-3xl shadow-brand-dark/5 space-y-10 transition-all duration-500 hover:bg-white hover:shadow-brand-orange/10"
-              >
-                <div className={`w-24 h-24 ${type.color} text-white rounded-[32px] flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-500`}>
-                  {type.icon}
-                </div>
-                <div className="space-y-6">
-                  <h3 className="text-4xl font-display font-black text-brand-dark leading-none uppercase tracking-tighter">{type.title}</h3>
-                  <p className="text-gray-500 text-lg leading-relaxed font-medium">{type.desc}</p>
-                </div>
-                <div className="space-y-4 pt-6">
-                  {type.features.map((f, i) => (
-                    <div key={i} className="flex items-center gap-3 text-sm font-black uppercase tracking-widest text-brand-dark/40 group-hover:text-brand-dark transition-colors">
-                      <div className={`w-2 h-2 rounded-full ${type.color}`} /> {f}
-                    </div>
-                  ))}
-                </div>
-                <div className="pt-8">
-                  <a 
-                    href={BRAND.whatsappLink}
-                    className="flex items-center gap-3 text-brand-orange font-black text-sm uppercase tracking-[0.3em] group/link"
-                  >
-                    Saber Mais <ArrowRight size={18} className="group-hover/link:translate-x-2 transition-transform" />
-                  </a>
-                </div>
-              </motion.div>
+              <EventFormatCard
+                key={idx}
+                title={type.title}
+                desc={type.desc}
+                icon={type.icon}
+                color={type.color}
+                features={type.features}
+                whatsappLink={BRAND.whatsappLink}
+              />
             ))}
           </motion.div>
         </div>
@@ -406,11 +356,10 @@ export default function Events() {
                 whileHover={{ scale: 0.98 }}
                 className={`${img.span} relative overflow-hidden rounded-[60px] group cursor-pointer aspect-square md:aspect-auto`}
               >
-                <img 
+                <SafeImage 
                   src={`https://picsum.photos/seed/${img.seed}/1200/1200`} 
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000" 
                   alt="Gallery" 
-                  referrerPolicy="no-referrer" 
                 />
                 <div className="absolute inset-0 bg-brand-orange/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="absolute bottom-10 left-10 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0">

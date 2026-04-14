@@ -4,7 +4,9 @@
  */
 
 import { motion, useScroll, useTransform } from "motion/react";
-import { BRAND } from "../constants";
+import { BRAND, GALLERY_IMAGES } from "../constants";
+import SafeImage from "../components/SafeImage";
+import MemberCard from "../components/MemberCard";
 import { Heart, Users, Globe, Palette, Sparkles, ShieldCheck, ArrowRight, History, Compass, Zap, Target, Crown, Rocket, Star } from "lucide-react";
 
 export default function About() {
@@ -34,11 +36,10 @@ export default function About() {
           style={{ y: y1 }}
           className="absolute inset-0 z-0 opacity-40"
         >
-          <img 
+          <SafeImage 
             src="https://picsum.photos/seed/about-hero-3/1920/1080" 
             className="w-full h-full object-cover" 
             alt="About Us" 
-            referrerPolicy="no-referrer" 
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-navy/20 via-brand-navy/60 to-brand-navy" />
         </motion.div>
@@ -125,7 +126,12 @@ export default function About() {
           >
             <div className="absolute -inset-10 bg-brand-orange/5 rounded-[100px] rotate-6" />
             <div className="relative rounded-[80px] overflow-hidden shadow-3xl shadow-brand-orange/20">
-              <img src="https://picsum.photos/seed/about-manifesto-1/1000/1200" className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" alt="Manifesto" referrerPolicy="no-referrer" />
+              <SafeImage 
+                src={GALLERY_IMAGES.natal} 
+                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" 
+                alt="Manifesto" 
+                fallbackSrc="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1000&q=80"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/60 to-transparent" />
               <div className="absolute bottom-16 left-16 right-16">
                 <div className="text-white text-3xl font-display font-black uppercase tracking-tighter leading-none">"Ninguém cresce sozinho."</div>
@@ -190,20 +196,13 @@ export default function About() {
                 color: "bg-brand-navy"
               }
             ].map((value, idx) => (
-              <motion.div 
-                key={idx} 
-                variants={itemVariants}
-                whileHover={{ y: -20 }}
-                className="group p-12 bg-white rounded-[60px] border border-gray-100 shadow-3xl shadow-brand-dark/5 space-y-8 transition-all duration-500 hover:shadow-brand-orange/10"
-              >
-                <div className={`w-24 h-24 ${value.color} text-white rounded-[32px] flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-500`}>
-                  {value.icon}
-                </div>
-                <div className="space-y-6">
-                  <h3 className="text-4xl font-display font-black text-brand-dark leading-none uppercase tracking-tighter">{value.title}</h3>
-                  <p className="text-gray-500 text-lg leading-relaxed font-medium">{value.desc}</p>
-                </div>
-              </motion.div>
+              <MemberCard
+                key={idx}
+                title={value.title}
+                desc={value.desc}
+                icon={value.icon}
+                color={value.color}
+              />
             ))}
           </motion.div>
         </div>

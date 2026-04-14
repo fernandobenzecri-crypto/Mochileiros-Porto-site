@@ -6,7 +6,7 @@
 import { useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { Helmet } from "react-helmet-async";
-import { BRAND, CALENDAR_2026 } from "../constants";
+import { BRAND, CALENDAR_2026, GALLERY_IMAGES } from "../constants";
 import { 
   ArrowRight, 
   Plane, 
@@ -27,6 +27,9 @@ import {
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import SEOHead from "../components/SEOHead";
+import SafeImage from "../components/SafeImage";
+import RegularTripCard from "../components/RegularTripCard";
+import PremiumTripCard from "../components/PremiumTripCard";
 import { db, handleFirestoreError, OperationType } from "../firebase";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { useEffect } from "react";
@@ -160,11 +163,11 @@ export default function Trips() {
           style={{ y: y1 }}
           className="absolute inset-0 z-0 opacity-50"
         >
-          <img 
+          <SafeImage 
             src="https://picsum.photos/seed/trips-hero-3/1920/1080" 
             className="w-full h-full object-cover" 
             alt="Trips" 
-            referrerPolicy="no-referrer" 
+            fallbackSrc="https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&w=1920&q=80"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-navy/20 via-brand-navy/60 to-brand-navy" />
         </motion.div>
@@ -263,65 +266,17 @@ export default function Trips() {
             viewport={{ once: true }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"
           >
-            {trips.filter(trip => trip.tipo === "excursao").map((trip, idx) => (
-              <motion.div 
-                key={trip.id || idx} 
-                variants={itemVariants}
-                whileHover={{ y: -20 }}
-                className="group relative overflow-hidden rounded-[80px] shadow-3xl aspect-[4/5] bg-brand-navy"
-              >
-                <img 
-                  src={trip.imagemUrl || `https://picsum.photos/seed/${trip.destino || trip.titulo}/1000/1200`} 
-                  className="w-full h-full object-cover opacity-70 group-hover:scale-110 group-hover:opacity-100 transition-all duration-1000 grayscale group-hover:grayscale-0" 
-                  alt={trip.destino || trip.titulo} 
-                  referrerPolicy="no-referrer" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/40 to-transparent opacity-90" />
-                
-                <div className="absolute top-10 right-10 bg-white/10 backdrop-blur-xl border border-white/20 text-white px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.3em] shadow-2xl">
-                  {formatDate(trip.dataPartida)}
-                </div>
-
-                <div className="absolute bottom-0 left-0 right-0 p-16 space-y-8">
-                  <div className="space-y-4">
-                    <div className="text-5xl group-hover:scale-125 transition-transform duration-500 origin-left">📍</div>
-                    <h3 className="text-4xl font-display font-black text-white leading-none uppercase tracking-tighter">{trip.destino || trip.titulo}</h3>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <p className="text-white/60 text-lg leading-relaxed font-medium group-hover:text-white transition-colors">
-                      {trip.vagasDisponiveis > 0 ? `${trip.vagasDisponiveis} vagas restantes` : "Esgotado"}
-                    </p>
-                    <div className="text-right">
-                      {profile?.is_vip ? (
-                        <div className="flex flex-col">
-                          <span className="text-[10px] font-black text-white/40 line-through">{formatPrice(trip.precoPublico)}</span>
-                          <span className="text-2xl font-display font-black text-brand-green">{getVipPrice(trip.precoPublico)}</span>
-                        </div>
-                      ) : (
-                        <span className="text-2xl font-display font-black text-brand-green">{formatPrice(trip.precoPublico)}</span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="pt-6">
-                    <button 
-                      onClick={() => handleBooking(trip)}
-                      disabled={loadingTripId === trip.id}
-                      className="group/btn w-full py-8 bg-brand-green text-white rounded-full font-display font-black text-sm uppercase tracking-[0.3em] flex items-center justify-center gap-4 hover:bg-white hover:text-brand-green transition-all duration-500 shadow-2xl shadow-brand-green/20 disabled:opacity-50"
-                    >
-                      {loadingTripId === trip.id ? (
-                        <Loader2 size={24} className="animate-spin" />
-                      ) : (
-                        <>RESERVAR VAGA <ArrowRight size={20} className="group-hover/btn:translate-x-2 transition-transform" /></>
-                      )}
-                    </button>
-                    {profile?.is_vip && (
-                      <p className="text-center text-[8px] font-black text-brand-green uppercase tracking-widest mt-4">
-                        Desconto VIP de 10% aplicado
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
+            {trips.filter(trip => trip.tipo === "excursao").map((trip) => (
+              <RegularTripCard
+                key={trip.id}
+                trip={trip}
+                loadingTripId={loadingTripId}
+                onBooking={handleBooking}
+                formatDate={formatDate}
+                formatPrice={formatPrice}
+                getVipPrice={getVipPrice}
+                isVip={!!profile?.is_vip}
+              />
             ))}
           </motion.div>
         </div>
@@ -343,60 +298,17 @@ export default function Trips() {
           
           <div className="space-y-32">
             {trips.filter(trip => trip.tipo === "premium").map((trip, idx) => (
-              <motion.div 
-                key={trip.id || idx}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className={`bg-white rounded-[100px] overflow-hidden shadow-3xl shadow-brand-dark/10 grid grid-cols-1 lg:grid-cols-2 group ${idx % 2 !== 0 ? 'lg:flex-row-reverse' : ''}`}
-              >
-                <div className={`relative overflow-hidden min-h-[500px] ${idx % 2 !== 0 ? 'lg:order-2' : ''}`}>
-                  <img src={trip.imagemUrl || `https://picsum.photos/seed/${trip.destino || trip.titulo}/1000/1200`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 grayscale group-hover:grayscale-0" alt={trip.destino || trip.titulo} referrerPolicy="no-referrer" />
-                  <div className="absolute top-12 left-12 bg-brand-green text-white px-10 py-4 rounded-full text-[10px] font-black uppercase tracking-[0.3em] shadow-3xl">
-                    {formatDate(trip.dataPartida)}
-                  </div>
-                  <div className="absolute inset-0 bg-brand-green/10 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-                <div className={`p-16 md:p-24 space-y-16 flex flex-col justify-center ${idx % 2 !== 0 ? 'lg:order-1' : ''}`}>
-                  <div className="space-y-8">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
-                      <h3 className="text-6xl md:text-8xl font-display font-black text-brand-dark leading-none uppercase tracking-tighter">{trip.destino || trip.titulo}</h3>
-                      <div className="text-left md:text-right">
-                        <div className="text-6xl font-display font-black text-brand-green leading-none tracking-tighter">{formatPrice(trip.precoPublico)}</div>
-                        <div className="text-[10px] uppercase font-black text-gray-400 mt-3 tracking-[0.3em]">
-                          {trip.vagasDisponiveis > 0 ? `${trip.vagasDisponiveis} vagas` : "Esgotado"}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="inline-flex items-center gap-3 bg-brand-green/10 text-brand-green px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-brand-green/20">
-                      <Zap size={16} className="fill-brand-green" /> Experiência Premium · Guia em Português
-                    </div>
-                  </div>
-
-                  <p className="text-gray-500 leading-relaxed text-2xl font-medium tracking-tight">
-                    {trip.descricao || "Uma viagem inesquecível com a família Mochileiros Porto. Tudo planejado para o seu máximo conforto e diversão."}
-                  </p>
-
-                  <div className="pt-10">
-                    <button 
-                      onClick={() => handleBooking(trip)}
-                      disabled={loadingTripId === trip.id || trip.vagasDisponiveis <= 0}
-                      className="group/btn w-full py-10 bg-brand-dark text-white rounded-full font-display font-black text-sm uppercase tracking-[0.3em] flex items-center justify-center gap-6 hover:bg-brand-green transition-all duration-500 shadow-3xl shadow-brand-dark/20 disabled:opacity-50"
-                    >
-                      {loadingTripId === trip.id ? (
-                        <Loader2 size={24} className="animate-spin" />
-                      ) : (
-                        <>{trip.vagasDisponiveis > 0 ? "RESERVAR AGORA" : "ESGOTADO"} <ArrowRight size={24} className="group-hover/btn:translate-x-2 transition-transform" /></>
-                      )}
-                    </button>
-                    {profile?.is_vip && (
-                      <p className="text-center text-[10px] font-black text-brand-green uppercase tracking-widest mt-6">
-                        Seu preço VIP: {getVipPrice(trip.precoPublico)}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
+              <PremiumTripCard
+                key={trip.id}
+                trip={trip}
+                idx={idx}
+                loadingTripId={loadingTripId}
+                onBooking={handleBooking}
+                formatDate={formatDate}
+                formatPrice={formatPrice}
+                getVipPrice={getVipPrice}
+                isVip={!!profile?.is_vip}
+              />
             ))}
           </div>
         </div>

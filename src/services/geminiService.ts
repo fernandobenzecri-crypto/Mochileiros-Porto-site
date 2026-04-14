@@ -24,7 +24,9 @@ export async function parseAdminCommand(command: string, usersContext: any[]): P
   const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
-    contents: `Você é o assistente administrativo do site "Mochileiros Porto".
+    contents: [{
+      parts: [{
+        text: `Você é o assistente administrativo do site "Mochileiros Porto".
     Sua tarefa é interpretar comandos em linguagem natural e transformá-los em ações estruturadas para gerenciar os membros da comunidade.
     
     COMANDO DO ADMIN: "${command}"
@@ -47,7 +49,9 @@ export async function parseAdminCommand(command: string, usersContext: any[]): P
       "targetUserId": "id_do_usuario",
       "value": valor_da_acao (string para PLAN/LEVEL, number para Mochis),
       "reasoning": "Explicação curta do que você entendeu"
-    }`,
+    }`
+      }]
+    }],
     config: {
       responseMimeType: "application/json",
       responseSchema: {

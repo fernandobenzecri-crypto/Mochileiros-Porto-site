@@ -5,6 +5,7 @@ import { Mail, Lock, ArrowRight, UserPlus, LogIn, MapPin, Phone, User } from "lu
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { auth, createUserProfile } from "../firebase";
 import SEOHead from "../components/SEOHead";
+import SafeImage from "../components/SafeImage";
 import { trackEvent } from "../analytics";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
@@ -83,7 +84,7 @@ export default function AuthPage({ mode = "login" }: { mode?: "login" | "registe
         >
           <div className="text-center space-y-6">
             <Link to="/" className="inline-block">
-              <img src="/logo.png" alt="Mochileiros Porto" className="w-24 h-24 mx-auto object-contain" referrerPolicy="no-referrer" />
+              <SafeImage src="/logo.png" alt="Mochileiros Porto" className="w-24 h-24 mx-auto object-contain" />
             </Link>
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 text-brand-green font-black uppercase tracking-[0.3em] text-[10px]">

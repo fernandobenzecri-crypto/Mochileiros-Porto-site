@@ -42,6 +42,7 @@ import { db } from "../firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import SEOHead from "../components/SEOHead";
+import SafeImage from "../components/SafeImage";
 import { trackEvent } from "../analytics";
 
 export default function Ambassador() {
@@ -143,11 +144,10 @@ export default function Ambassador() {
       {/* SECTION 1 — HERO */}
       <section className="relative min-h-screen flex items-center justify-center text-center px-4 overflow-hidden bg-brand-navy">
         <div className="absolute inset-0 z-0">
-          <img 
+          <SafeImage 
             src="https://picsum.photos/seed/mochileiros-group/1920/1080" 
             className="w-full h-full object-cover opacity-40" 
             alt="Mochileiros Porto Group" 
-            referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-brand-navy/60 backdrop-blur-[2px]" />
         </div>
@@ -246,11 +246,10 @@ export default function Ambassador() {
             className="relative"
           >
             <div className="absolute inset-0 bg-brand-green/10 rounded-[60px] blur-3xl -rotate-6" />
-            <img 
+            <SafeImage 
               src="https://picsum.photos/seed/ambassador-concept/800/1000" 
               className="relative z-10 w-full h-auto rounded-[60px] shadow-3xl" 
               alt="Ambassador Concept" 
-              referrerPolicy="no-referrer"
             />
             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-brand-yellow rounded-[40px] flex items-center justify-center shadow-2xl z-20 rotate-12">
               <Crown size={80} className="text-brand-dark" />
@@ -715,7 +714,7 @@ export default function Ambassador() {
                   "Quando cheguei ao Porto, estava perdido. Não sabia nada de NIF, NISS, nada. Uma pessoa da comunidade me ajudou — e foi tão marcante que quis ser essa pessoa para os outros. Hoje como Embaixador MP, cada mensagem que respondo me lembra por que vim parar aqui."
                 </p>
                 <div className="flex flex-col items-center gap-6">
-                  <img 
+                  <SafeImage 
                     src="https://i.pravatar.cc/200?u=carlos" 
                     className="w-32 h-32 rounded-full border-4 border-brand-green shadow-2xl" 
                     alt="Carlos Eduardo" 

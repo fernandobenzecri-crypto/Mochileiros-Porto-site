@@ -1,11 +1,75 @@
-import { motion, useScroll, useTransform } from "motion/react";
-import { BRAND, TUTORIALS } from "../constants";
-import { ArrowRight, ShieldCheck, FileText, Home, Briefcase, CheckCircle2, Zap, TrendingUp, Users, Globe, Award, Sparkles, Lock, BookOpen, Scale, Calculator, ChevronRight } from "lucide-react";
+import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
+import { BRAND, ADVISORY_CATEGORIES, OFFICIAL_LINKS } from "../constants";
+import SafeImage from "../components/SafeImage";
+import { ArrowRight, ShieldCheck, FileText, Home, Briefcase, CheckCircle2, Zap, TrendingUp, Users, Globe, Award, Sparkles, Lock, BookOpen, Scale, Calculator, ChevronRight, Info, ExternalLink, Mail, MessageCircle, Clock, Search } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState, useMemo } from "react";
+
+function CertidoesSteps() {
+  return (
+    <div className="bg-brand-navy text-white p-8 md:p-12 rounded-[40px] space-y-12">
+      <div className="space-y-4">
+        <h3 className="text-3xl font-display font-black uppercase tracking-tighter">Certidões de Inexistência de Dívida</h3>
+        <p className="text-white/60 font-medium">Siga o passo a passo oficial para obter suas certidões online de forma imediata.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        {/* Finanças */}
+        <div className="space-y-8 p-8 bg-white/5 rounded-3xl border border-white/10 hover:border-brand-green/30 transition-colors group">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-brand-green text-white rounded-xl flex items-center justify-center font-black shadow-lg shadow-brand-green/20">1</div>
+            <h4 className="text-xl font-display font-black uppercase tracking-tight">Finanças</h4>
+          </div>
+          <ul className="space-y-4 text-sm text-white/70 font-medium">
+            <li className="flex gap-3"><span className="text-brand-green font-black">•</span> Ter NIF + palavra-passe do Portal das Finanças</li>
+            <li className="flex gap-3"><span className="text-brand-green font-black">•</span> Aceder ao Portal das Finanças</li>
+            <li className="flex gap-3"><span className="text-brand-green font-black">•</span> Login → Todos os Serviços → Documentos e Certidões → Certidões</li>
+            <li className="flex gap-3"><span className="text-brand-green font-black">•</span> Clicar em "Pedir Certidão" → tipo "Dívida e não dívida"</li>
+            <li className="flex gap-3"><span className="text-brand-green font-black">•</span> Descarregar PDF (validade: 3 meses)</li>
+          </ul>
+          <a href="https://portaldasfinancas.gov.pt" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-brand-green font-black text-xs uppercase tracking-widest hover:underline group-hover:translate-x-2 transition-transform">
+            ACEDER PORTAL <ExternalLink size={14} />
+          </a>
+        </div>
+
+        {/* Segurança Social */}
+        <div className="space-y-8 p-8 bg-white/5 rounded-3xl border border-white/10 hover:border-brand-orange/30 transition-colors group">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-brand-orange text-white rounded-xl flex items-center justify-center font-black shadow-lg shadow-brand-orange/20">2</div>
+            <h4 className="text-xl font-display font-black uppercase tracking-tight">Segurança Social</h4>
+          </div>
+          <ul className="space-y-4 text-sm text-white/70 font-medium">
+            <li className="flex gap-3"><span className="text-brand-orange font-black">•</span> Ter NISS + acesso à Segurança Social Direta</li>
+            <li className="flex gap-3"><span className="text-brand-orange font-black">•</span> Aceder à Segurança Social Direta</li>
+            <li className="flex gap-3"><span className="text-brand-orange font-black">•</span> Login → Conta-corrente → Situação Contributiva</li>
+            <li className="flex gap-3"><span className="text-brand-orange font-black">•</span> Selecionar "Obter declaração" → PDF imediato</li>
+            <li className="flex gap-3"><span className="text-brand-orange font-black">•</span> Validade: 4 meses</li>
+          </ul>
+          <a href="https://app.seg-social.pt" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-brand-orange font-black text-xs uppercase tracking-widest hover:underline group-hover:translate-x-2 transition-transform">
+            ACEDER PORTAL <ExternalLink size={14} />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Advisory() {
   const { scrollYProgress } = useScroll();
   const y1 = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  const [activeCategory, setActiveCategory] = useState(ADVISORY_CATEGORIES[0].id);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredCategories = useMemo(() => {
+    if (!searchQuery) return ADVISORY_CATEGORIES;
+    return ADVISORY_CATEGORIES.map(cat => ({
+      ...cat,
+      tutorials: cat.tutorials.filter(t => 
+        t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        t.desc.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    })).filter(cat => cat.tutorials.length > 0);
+  }, [searchQuery]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -25,27 +89,20 @@ export default function Advisory() {
   return (
     <div className="flex flex-col bg-white overflow-hidden">
       {/* HERO - Technical Precision */}
-      <section className="relative min-h-screen flex items-center justify-center text-center px-4 overflow-hidden bg-brand-navy">
+      <section className="relative min-h-[80vh] flex items-center justify-center text-center px-4 overflow-hidden bg-brand-navy">
         <motion.div 
           style={{ y: y1 }}
           className="absolute inset-0 z-0 opacity-40"
         >
-          <img 
+          <SafeImage 
             src="https://picsum.photos/seed/advisory-hero-3/1920/1080" 
             className="w-full h-full object-cover" 
             alt="Advisory" 
-            referrerPolicy="no-referrer" 
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-navy/20 via-brand-navy/60 to-brand-navy" />
         </motion.div>
         
-        {/* Animated Background Elements */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-brand-green/20 rounded-full blur-[140px] animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-brand-orange/10 rounded-full blur-[140px] animate-pulse delay-1000" />
-        </div>
-
-        <div className="relative z-10 max-w-7xl mx-auto space-y-16">
+        <div className="relative z-10 max-w-7xl mx-auto space-y-12 py-20">
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 50 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -53,10 +110,10 @@ export default function Advisory() {
             className="space-y-8"
           >
             <div className="inline-flex items-center gap-3 px-6 py-2 bg-brand-green/20 text-brand-green rounded-full text-[10px] font-black uppercase tracking-[0.4em] border border-brand-green/30 backdrop-blur-xl">
-              <ShieldCheck size={14} className="fill-brand-green" /> Consultoria Especializada
+              <ShieldCheck size={14} className="fill-brand-green" /> Central de Assessoria & Tutoriais
             </div>
             <h1 className="text-[10vw] md:text-[8vw] lg:text-[10vw] text-white leading-[0.8] tracking-tighter font-display font-black uppercase">
-              EXPERT <br />
+              PORTO <br />
               <span className="text-brand-green">ADVISORY</span>
             </h1>
           </motion.div>
@@ -68,241 +125,222 @@ export default function Advisory() {
             className="flex flex-col items-center justify-center gap-12"
           >
             <p className="text-xl md:text-3xl text-white/70 max-w-4xl font-medium leading-relaxed tracking-tight">
-              Sua transição para Portugal com <span className="text-white font-black italic">segurança jurídica</span>, <br className="hidden md:block" />
-              planejamento estratégico e suporte local completo.
+              Tudo o que você precisa para sua jornada em Portugal. <br className="hidden md:block" />
+              <span className="text-white font-black italic">Tutoriais gratuitos</span>, links oficiais e suporte especializado.
             </p>
-            <div className="flex flex-col sm:flex-row items-center gap-10">
+            <div className="flex flex-col sm:flex-row items-center gap-6">
               <a 
                 href={BRAND.whatsappLink} 
-                className="group relative w-full sm:w-auto bg-brand-green text-white px-16 py-8 rounded-full text-2xl font-display font-black shadow-2xl shadow-brand-green/40 hover:bg-white hover:text-brand-green transition-all duration-500 hover:scale-105 active:scale-95 overflow-hidden"
+                className="group relative w-full sm:w-auto bg-brand-green text-white px-12 py-6 rounded-full text-xl font-display font-black shadow-2xl shadow-brand-green/40 hover:bg-white hover:text-brand-green transition-all duration-500 hover:scale-105 active:scale-95 overflow-hidden"
               >
                 <span className="relative z-10 flex items-center gap-3">
-                  AGENDAR CONSULTORIA <ArrowRight size={24} className="group-hover:translate-x-2 transition-transform" />
+                  CONSULTA GRATUITA <MessageCircle size={20} />
                 </span>
                 <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+              </a>
+              <a 
+                href="#tutoriais" 
+                className="text-white/60 hover:text-white font-black uppercase tracking-widest text-xs transition-colors"
+              >
+                Explorar Tutoriais ↓
               </a>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* SERVICES - SaaS Style Cards */}
-      <section className="py-40 px-4 bg-white relative overflow-hidden">
-        <div className="max-w-7xl mx-auto space-y-32">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-12">
-            <div className="space-y-6">
+      {/* TUTORIALS SECTION */}
+      <section id="tutoriais" className="py-32 px-4 bg-brand-gray relative overflow-hidden">
+        <div className="max-w-7xl mx-auto space-y-24">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-12">
+            <div className="space-y-6 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 text-brand-green font-black uppercase tracking-[0.3em] text-[10px]">
-                <Zap size={14} className="fill-brand-green" /> Soluções 360º
+                <BookOpen size={14} className="fill-brand-green" /> Conhecimento Livre
               </div>
-              <h2 className="text-6xl md:text-9xl font-display font-black text-brand-dark tracking-tighter uppercase leading-[0.8]">Nossas <br /><span className="text-brand-green">áreas</span></h2>
-              <p className="text-gray-500 text-2xl max-w-xl font-medium tracking-tight">Especialistas brasileiros que entendem a sua realidade e as leis portuguesas.</p>
+              <h2 className="text-6xl md:text-8xl font-display font-black text-brand-dark tracking-tighter uppercase leading-[0.8]">Guias <br /><span className="text-brand-green">Práticos</span></h2>
+            </div>
+
+            {/* Search Bar */}
+            <div className="relative w-full max-w-md">
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <input 
+                type="text" 
+                placeholder="O que você procura? (ex: NIF, Visto...)"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-16 pr-8 py-6 bg-white rounded-full border border-gray-100 shadow-xl focus:ring-2 focus:ring-brand-green outline-none font-medium transition-all"
+              />
             </div>
           </div>
 
-          <motion.div 
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"
-          >
-            {[
-              { 
-                title: "Imigração & Vistos", 
-                desc: "Suporte completo para D7, D2, Nômade Digital e reagrupamento familiar.", 
-                icon: <Scale size={32} />, 
-                features: ["Análise de perfil", "Preparação de dossiê", "Acompanhamento no SEF/AIMA"],
-                color: "bg-brand-green"
-              },
-              { 
-                title: "Imobiliário", 
-                desc: "Encontre o imóvel ideal para morar ou investir com assessoria local.", 
-                icon: <Home size={32} />, 
-                features: ["Busca personalizada", "Análise de contratos", "Vistoria técnica"],
-                color: "bg-brand-navy"
-              },
-              { 
-                title: "Contabilidade & B2B", 
-                desc: "Abertura de empresa, NIF, NISS e planejamento tributário estratégico.", 
-                icon: <Calculator size={32} />, 
-                features: ["Abertura de Atividade", "Declaração de IRS", "Contabilidade Organizada"],
-                color: "bg-brand-orange"
-              }
-            ].map((service, idx) => (
-              <motion.div 
-                key={idx} 
-                variants={itemVariants}
-                whileHover={{ y: -20 }}
-                className="group p-12 bg-brand-gray rounded-[60px] border border-gray-100 shadow-3xl shadow-brand-dark/5 space-y-10 transition-all duration-500 hover:bg-white hover:shadow-brand-green/10"
+          {/* Categories Tabs */}
+          <div className="flex flex-wrap justify-center gap-4">
+            {ADVISORY_CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.id)}
+                className={`px-8 py-4 rounded-full font-display font-black text-xs uppercase tracking-widest transition-all duration-500 ${
+                  activeCategory === cat.id 
+                    ? "bg-brand-navy text-white shadow-2xl scale-105" 
+                    : "bg-white text-gray-400 hover:bg-gray-50"
+                }`}
               >
-                <div className={`w-24 h-24 ${service.color} text-white rounded-[32px] flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-500`}>
-                  {service.icon}
-                </div>
-                <div className="space-y-6">
-                  <h3 className="text-4xl font-display font-black text-brand-dark leading-none uppercase tracking-tighter">{service.title}</h3>
-                  <p className="text-gray-500 text-lg leading-relaxed font-medium">{service.desc}</p>
-                </div>
-                <ul className="space-y-4 pt-6 border-t border-gray-100">
-                  {service.features.map((f, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm text-gray-600 font-bold">
-                      <CheckCircle2 size={18} className="text-brand-green" /> {f}
+                <span className="mr-2">{cat.icon}</span> {cat.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Tutorials Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <AnimatePresence mode="wait">
+              {filteredCategories
+                .find(cat => cat.id === activeCategory)
+                ?.tutorials.map((t) => (
+                  <motion.div
+                    key={t.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    whileHover={{ y: -10 }}
+                    className="group bg-white p-10 rounded-[40px] shadow-xl border border-gray-50 flex flex-col justify-between transition-all duration-500 hover:shadow-brand-green/10"
+                  >
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between">
+                        <div className="w-12 h-12 bg-brand-gray rounded-2xl flex items-center justify-center text-brand-navy font-black text-xl">
+                          {t.id}
+                        </div>
+                        {t.link && (
+                          <span className="px-4 py-1.5 bg-brand-green/10 text-brand-green rounded-full text-[8px] font-black uppercase tracking-widest border border-brand-green/20">
+                            Oficial
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-2xl font-display font-black text-brand-dark uppercase tracking-tighter leading-tight group-hover:text-brand-green transition-colors">
+                        {t.title}
+                      </h3>
+                      <p className="text-gray-500 text-sm font-medium leading-relaxed">
+                        {t.desc}
+                      </p>
+                    </div>
+
+                    <div className="pt-8 mt-8 border-t border-gray-50">
+                      {t.link ? (
+                        <a 
+                          href={t.link} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-brand-navy font-black text-[10px] uppercase tracking-widest hover:text-brand-green transition-colors"
+                        >
+                          Aceder Link Oficial <ExternalLink size={14} />
+                        </a>
+                      ) : (
+                        <span className="text-gray-300 font-black text-[10px] uppercase tracking-widest">
+                          Guia em breve
+                        </span>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+            </AnimatePresence>
+          </div>
+
+          {/* Special Section: Certidões */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="pt-12"
+          >
+            <CertidoesSteps />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* OFFICIAL LINKS SUMMARY */}
+      <section className="py-32 px-4 bg-white relative">
+        <div className="max-w-7xl mx-auto space-y-24">
+          <div className="text-center space-y-6">
+            <h2 className="text-5xl md:text-7xl font-display font-black text-brand-dark tracking-tighter uppercase">Links <span className="text-brand-green">Úteis</span></h2>
+            <p className="text-gray-500 text-xl font-medium">Acesso rápido aos principais portais governamentais e de serviços.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            {OFFICIAL_LINKS.map((group, i) => (
+              <div key={i} className="space-y-8">
+                <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-green border-b border-brand-green/20 pb-4">
+                  {group.category}
+                </h4>
+                <ul className="space-y-4">
+                  {group.links.map((link, j) => (
+                    <li key={j}>
+                      <a 
+                        href={link.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="group flex items-center justify-between p-6 bg-brand-gray rounded-3xl hover:bg-brand-navy hover:text-white transition-all duration-500"
+                      >
+                        <span className="font-bold text-sm uppercase tracking-widest">{link.label}</span>
+                        <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
+                      </a>
                     </li>
                   ))}
                 </ul>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* TUTORIALS - Immersive Bento Grid */}
-      <section id="tutoriais" className="py-40 px-4 bg-brand-gray relative overflow-hidden">
-        <div className="max-w-7xl mx-auto space-y-32">
-          <div className="text-center space-y-8">
-            <div className="inline-flex items-center gap-2 text-brand-green font-black uppercase tracking-[0.3em] text-[10px]">
-              <BookOpen size={14} className="fill-brand-green" /> Conhecimento Livre
-            </div>
-            <h2 className="text-6xl md:text-9xl font-display font-black text-brand-dark tracking-tighter uppercase leading-[0.8]">Guias <br /><span className="text-brand-green">Práticos</span></h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {TUTORIALS.public.map((t, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="group bg-white p-12 rounded-[60px] shadow-3xl shadow-brand-dark/5 space-y-10 transition-all duration-500 hover:shadow-brand-green/10"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="text-7xl group-hover:scale-110 transition-transform duration-500">{t.icon}</div>
-                  <span className="px-6 py-2 bg-brand-green/10 text-brand-green rounded-full text-[10px] font-black uppercase tracking-widest border border-brand-green/20">
-                    {t.category}
-                  </span>
-                </div>
-                <div className="space-y-6">
-                  <h3 className="text-4xl font-display font-black text-brand-dark leading-none uppercase tracking-tighter group-hover:text-brand-green transition-colors">{t.title}</h3>
-                  <p className="text-gray-500 text-xl font-medium leading-relaxed">{t.description}</p>
-                </div>
-                <div className="space-y-4 pt-8 border-t border-gray-100">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">O que você vai encontrar:</p>
-                  {t.details.map((detail, j) => (
-                    <div key={j} className="flex items-center gap-4 text-gray-600 font-bold text-sm">
-                      <CheckCircle2 size={16} className="text-brand-green shrink-0" /> {detail}
-                    </div>
-                  ))}
-                </div>
-
-                {t.links && t.links.length > 0 && (
-                  <div className="space-y-4 pt-8 border-t border-gray-100">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Links Úteis:</p>
-                    <div className="flex flex-wrap gap-3">
-                      {t.links.map((link, l) => (
-                        <a 
-                          key={l}
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-4 py-2 bg-brand-gray hover:bg-brand-green hover:text-white rounded-xl text-xs font-bold transition-all duration-300 flex items-center gap-2"
-                        >
-                          <Globe size={12} /> {link.label}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                <div className="pt-8">
-                  <a 
-                    href={t.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-3 text-brand-green font-black text-sm uppercase tracking-widest group-hover:translate-x-2 transition-transform"
-                  >
-                    Ler guia completo <ArrowRight size={20} />
-                  </a>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* VIP TUTORIALS - Locked Immersive */}
-      <section className="py-40 px-4 bg-brand-navy relative overflow-hidden">
-        <div className="max-w-7xl mx-auto space-y-32">
-          <div className="text-center space-y-8">
-            <div className="inline-flex items-center gap-2 text-brand-orange font-black uppercase tracking-[0.3em] text-[10px]">
-              <Lock size={14} className="fill-brand-orange" /> Conteúdo Premium
-            </div>
-            <h2 className="text-6xl md:text-9xl font-display font-black text-white tracking-tighter uppercase leading-[0.8]">Tutoriais <br /><span className="text-brand-orange">VIP</span></h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {TUTORIALS.vip.map((t, idx) => (
-              <div key={idx} className="relative group h-[600px] rounded-[80px] overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm">
-                <div className="absolute inset-0 p-16 flex flex-col justify-between opacity-20 grayscale transition-all duration-700 group-hover:opacity-40">
-                  <div className="text-9xl">{t.icon}</div>
-                  <div className="space-y-8">
-                    <h3 className="text-5xl font-display font-black text-white uppercase tracking-tighter leading-none">{t.title}</h3>
-                    <p className="text-white/60 text-xl font-medium leading-relaxed">{t.description}</p>
-                  </div>
-                </div>
-                
-                <div className="absolute inset-0 flex items-center justify-center p-12 text-center bg-brand-navy/60 backdrop-blur-md">
-                  <div className="space-y-10">
-                    <div className="w-32 h-32 bg-brand-orange text-white rounded-[40px] flex items-center justify-center mx-auto shadow-3xl rotate-6 group-hover:rotate-0 transition-transform duration-700">
-                      <Lock size={56} />
-                    </div>
-                    <div className="space-y-8">
-                      <p className="text-4xl font-display font-black text-white uppercase tracking-tighter leading-none">Desbloqueie com <br />o Clube VIP</p>
-                      <Link 
-                        to="/clube-vip" 
-                        className="inline-flex items-center gap-4 bg-brand-orange text-white px-12 py-6 rounded-full text-sm font-black uppercase tracking-widest shadow-2xl shadow-brand-orange/40 hover:scale-105 transition-transform"
-                      >
-                        QUERO SER VIP <ChevronRight size={20} />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FINAL CTA - Professional */}
-      <section className="py-40 px-4 bg-white relative overflow-hidden">
-        <div className="max-w-5xl mx-auto text-center space-y-16">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="space-y-8"
-          >
-            <h2 className="text-6xl md:text-9xl font-display font-black text-brand-dark tracking-tighter uppercase leading-[0.8]">Pronto para <br /><span className="text-brand-green">começar?</span></h2>
-            <p className="text-gray-500 text-2xl max-w-3xl mx-auto font-medium tracking-tight leading-relaxed">
-              Agende uma reunião inicial e vamos desenhar o melhor caminho para o seu sucesso em Portugal.
-            </p>
-          </motion.div>
+      {/* CONTACT & SUPPORT */}
+      <section className="py-32 px-4 bg-brand-navy text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5 pointer-events-none">
+          <div className="w-full h-full bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:40px_40px]" />
+        </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex flex-col items-center gap-10"
-          >
+        <div className="max-w-5xl mx-auto text-center space-y-16 relative z-10">
+          <div className="space-y-8">
+            <h2 className="text-6xl md:text-8xl font-display font-black tracking-tighter uppercase leading-[0.8]">Precisa de <br /><span className="text-brand-green">ajuda extra?</span></h2>
+            <p className="text-white/60 text-2xl max-w-3xl mx-auto font-medium tracking-tight leading-relaxed">
+              Nossa equipe de especialistas está pronta para auxiliar em processos complexos e garantir sua tranquilidade.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <a 
-              href={BRAND.whatsappLink} 
-              className="group relative w-full sm:w-auto bg-brand-dark text-white px-20 py-10 rounded-full text-3xl font-display font-black shadow-3xl shadow-brand-dark/20 hover:bg-brand-green transition-all duration-500 hover:scale-105 active:scale-95 overflow-hidden"
+              href={BRAND.whatsappLink}
+              className="group flex flex-col items-center gap-6 p-12 bg-white/5 rounded-[60px] border border-white/10 hover:bg-brand-green hover:border-brand-green transition-all duration-700"
             >
-              <span className="relative z-10 flex items-center gap-4">
-                FALAR COM UM ESPECIALISTA <ArrowRight size={32} className="group-hover:translate-x-2 transition-transform" />
-              </span>
-              <div className="absolute inset-0 bg-brand-green translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+              <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center group-hover:bg-white group-hover:text-brand-green transition-colors">
+                <MessageCircle size={40} />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-display font-black uppercase tracking-tight">WhatsApp</h3>
+                <p className="text-white/40 group-hover:text-white/80 font-medium">Atendimento imediato</p>
+              </div>
             </a>
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400">Atendimento personalizado e sigiloso</p>
-          </motion.div>
+
+            <a 
+              href={`mailto:${BRAND.email}`}
+              className="group flex flex-col items-center gap-6 p-12 bg-white/5 rounded-[60px] border border-white/10 hover:bg-brand-navy hover:border-white/20 transition-all duration-700"
+            >
+              <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center group-hover:bg-white group-hover:text-brand-navy transition-colors">
+                <Mail size={40} />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-display font-black uppercase tracking-tight">E-mail</h3>
+                <p className="text-white/40 group-hover:text-white/80 font-medium">tripsmochileirosporto@gmail.com</p>
+              </div>
+            </a>
+          </div>
+
+          <div className="pt-12">
+            <Link 
+              to="/clube-vip" 
+              className="inline-flex items-center gap-4 bg-brand-orange text-white px-16 py-8 rounded-full text-xl font-display font-black uppercase tracking-widest shadow-2xl shadow-brand-orange/40 hover:scale-105 transition-transform"
+            >
+              QUERO SER VIP & TER SUPORTE <Zap size={24} />
+            </Link>
+          </div>
         </div>
       </section>
     </div>

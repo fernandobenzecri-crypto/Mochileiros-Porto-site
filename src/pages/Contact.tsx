@@ -5,6 +5,7 @@
 
 import { motion } from "motion/react";
 import { BRAND } from "../constants";
+import SafeImage from "../components/SafeImage";
 import { MessageSquare, Mail, MapPin, Send, Phone, ArrowRight, ShieldCheck, Zap } from "lucide-react";
 
 export default function Contact() {
@@ -28,11 +29,10 @@ export default function Contact() {
       {/* HERO */}
       <section className="relative min-h-[60vh] flex items-center justify-center text-center px-4 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
+          <SafeImage 
             src="https://picsum.photos/seed/contact-hero-2/1920/1080" 
             className="w-full h-full object-cover" 
             alt="Contact Hero" 
-            referrerPolicy="no-referrer" 
           />
           <div className="absolute inset-0 bg-brand-navy/85 backdrop-blur-[2px]" />
         </div>
@@ -217,11 +217,10 @@ export default function Contact() {
             Venha tomar um café conosco e planejar sua próxima aventura.
           </p>
           <div className="aspect-[21/9] bg-white rounded-[60px] shadow-2xl shadow-brand-dark/5 overflow-hidden border-8 border-white">
-             <img 
+             <SafeImage 
                src="https://picsum.photos/seed/porto-map/1600/800" 
                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" 
                alt="Porto Map" 
-               referrerPolicy="no-referrer" 
              />
           </div>
         </div>

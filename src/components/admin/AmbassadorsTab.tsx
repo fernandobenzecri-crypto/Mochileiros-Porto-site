@@ -1,5 +1,5 @@
 import React from "react";
-import { Crown, Calendar, User, CheckCircle2, XCircle, Star, UserPlus, Users, Trophy } from "lucide-react";
+import { Crown, Calendar, User, CheckCircle2, XCircle, Star, UserPlus, Users, Trophy, Gift } from "lucide-react";
 import { UserProfile } from "../../firebase";
 
 interface AmbassadorsTabProps {
@@ -115,7 +115,7 @@ export default function AmbassadorsTab({
               </tr>
             </thead>
             <tbody className="text-sm">
-              {activeAmbassadors.map((amb) => (
+              {activeAmbassadors.sort((a, b) => (b.points || 0) - (a.points || 0)).map((amb) => (
                 <tr key={amb.uid} className="border-t border-gray-50 hover:bg-brand-gray/30 transition-all duration-500 group">
                   <td className="px-12 py-10">
                     <div className="font-display font-black text-lg text-brand-dark uppercase tracking-tighter">{amb.name}</div>
@@ -138,6 +138,70 @@ export default function AmbassadorsTab({
           </table>
         ) : (
           <div className="p-12 space-y-12">
+            {/* Ranking and Rewards Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 bg-white p-10 rounded-[50px] border border-gray-100 shadow-xl">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-12 h-12 bg-brand-yellow/10 rounded-2xl flex items-center justify-center text-brand-yellow">
+                    <Trophy size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-display font-black uppercase tracking-tight text-brand-dark">Ranking Geral</h3>
+                    <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Top Embaixadores por Pontuação</p>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  {activeAmbassadors.sort((a, b) => (b.points || 0) - (a.points || 0)).slice(0, 5).map((amb, index) => (
+                    <div key={amb.uid} className="flex items-center justify-between p-6 bg-brand-gray/30 rounded-3xl border border-gray-50">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-display font-black text-lg ${index === 0 ? 'bg-brand-yellow text-white' : 'bg-brand-navy text-white'}`}>
+                          {index + 1}
+                        </div>
+                        <div>
+                          <div className="font-display font-black text-brand-dark uppercase tracking-tight">{amb.name}</div>
+                          <div className="text-[10px] text-gray-400 font-bold">{amb.points || 0} Pontos</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Star size={14} className="text-brand-yellow fill-brand-yellow" />
+                        <span className="text-xs font-black text-brand-dark uppercase">{amb.metaAtual || 'Básica'}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-brand-dark p-10 rounded-[50px] text-white space-y-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-brand-green/20 rounded-2xl flex items-center justify-center text-brand-green">
+                    <Gift size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-display font-black uppercase tracking-tight">Recompensas</h3>
+                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest">Metas e Prêmios</p>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {[
+                    { meta: 'Básica', pontos: '0', premio: 'Plano VIP Grátis' },
+                    { meta: 'Prata', pontos: '1000', premio: 'Kit Embaixador' },
+                    { meta: 'Ouro', pontos: '2500', premio: 'Excursão Grátis' },
+                    { meta: 'Diamante', pontos: '5000', premio: 'Viagem Premium' },
+                  ].map((item) => (
+                    <div key={item.meta} className="p-6 bg-white/5 rounded-3xl border border-white/10 space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-brand-green">{item.meta}</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-white/40">{item.pontos} pts</span>
+                      </div>
+                      <div className="font-display font-black text-lg uppercase tracking-tight">{item.premio}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             {/* Toca Meeting Management */}
             <div className="bg-brand-navy p-10 rounded-[50px] text-white">
               <div className="flex justify-between items-center mb-10">

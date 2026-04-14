@@ -8,12 +8,66 @@ import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { doc, onSnapshot, query, collection, orderBy } from "firebase/firestore";
+import { doc, onSnapshot, query, collection, orderBy, addDoc, serverTimestamp } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "../firebase";
-import { STATS, CALENDAR_2026, TESTIMONIALS, BRAND } from "../constants";
+import { STATS, CALENDAR_2026, TESTIMONIALS, BRAND, GALLERY_IMAGES } from "../constants";
 import { LeadCaptureForm } from "../components/LeadCaptureForm";
+import SafeImage from "../components/SafeImage";
 import SEOHead from "../components/SEOHead";
-import { ArrowRight, Sparkles, Globe, Users, Zap, Heart, Calendar, MessageCircle, Star, Quote, Clock, Instagram, Utensils, Activity, Scale, Home as HomeIcon, Scissors, Ticket, Newspaper } from "lucide-react";
+import { ArrowRight, Sparkles, Globe, Users, Zap, Heart, Calendar, MessageCircle, Star, Quote, Clock, Instagram, Utensils, Activity, Scale, Home as HomeIcon, Scissors, Ticket, Newspaper, Check } from "lucide-react";
+
+function AgendaLeadForm() {
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setStatus("loading");
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+
+    try {
+      await addDoc(collection(db, "leads_agenda"), {
+        email,
+        created_at: serverTimestamp(),
+        source: "agenda_2026_placeholder"
+      });
+      setStatus("success");
+    } catch (error) {
+      console.error("Erro ao salvar lead da agenda:", error);
+      setStatus("error");
+    }
+  };
+
+  if (status === "success") {
+    return (
+      <div className="bg-brand-green/10 p-8 rounded-3xl border border-brand-green/20 text-center space-y-4">
+        <div className="w-12 h-12 bg-brand-green text-white rounded-xl flex items-center justify-center mx-auto">
+          <Check size={24} />
+        </div>
+        <p className="text-brand-green font-black uppercase tracking-widest text-xs">E-mail registado com sucesso!</p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-4 max-w-xl mx-auto">
+      <input 
+        required
+        name="email"
+        type="email" 
+        placeholder="O teu melhor e-mail"
+        className="flex-grow h-16 px-8 bg-brand-gray border border-gray-100 rounded-full focus:outline-none focus:ring-4 focus:ring-brand-green/10 focus:border-brand-green transition-all font-bold text-brand-dark placeholder:text-gray-400"
+      />
+      <button 
+        type="submit"
+        disabled={status === "loading"}
+        className="h-16 px-10 bg-brand-navy text-white rounded-full font-display font-black text-xs uppercase tracking-widest hover:bg-brand-green transition-all shadow-xl disabled:opacity-50"
+      >
+        {status === "loading" ? "A enviar..." : "QUERO RECEBER A AGENDA"}
+      </button>
+    </form>
+  );
+}
 
 function Countdown({ targetDate }: { targetDate: string }) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -155,11 +209,10 @@ export default function Home() {
           style={{ y: y1 }}
           className="absolute inset-0 z-0 opacity-40"
         >
-          <img 
+          <SafeImage 
             src="https://picsum.photos/seed/mochileiros-hero-3/1920/1080" 
             className="w-full h-full object-cover" 
             alt="Mochileiros Porto" 
-            referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-navy/20 via-brand-navy/60 to-brand-navy" />
         </motion.div>
@@ -180,7 +233,7 @@ export default function Home() {
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             className="space-y-8 flex flex-col items-center"
           >
-            <img src={BRAND.logo} alt="Logo" className="w-32 h-32 md:w-48 md:h-48 object-contain mb-4 drop-shadow-2xl" referrerPolicy="no-referrer" />
+            <SafeImage src={BRAND.logo} alt="Logo" className="w-32 h-32 md:w-48 md:h-48 object-contain mb-4 drop-shadow-2xl" />
             <div className="inline-flex items-center gap-3 px-6 py-2 bg-brand-green/20 text-brand-green rounded-full text-[10px] font-black uppercase tracking-[0.4em] border border-brand-green/30 backdrop-blur-xl">
               <Globe size={14} /> A Maior Comunidade Brasileira no Porto
             </div>
@@ -299,12 +352,11 @@ export default function Home() {
           >
             <div className="absolute -inset-8 bg-brand-green/10 rounded-[80px] rotate-6" />
             <div className="relative rounded-[60px] overflow-hidden shadow-3xl">
-              <img 
-                src="https://picsum.photos/seed/founders-porto/1000/1200" 
+              <SafeImage 
+                src={GALLERY_IMAGES.founders} 
                 alt="Fernando e Camila" 
                 className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000 scale-110 hover:scale-100"
-                referrerPolicy="no-referrer"
-                loading="lazy"
+                fallbackSrc="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1000&q=80"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/60 to-transparent" />
               <div className="absolute bottom-12 left-12 right-12 flex justify-between items-end">
@@ -344,7 +396,7 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <Link to="/sobre" className="group inline-flex items-center gap-4 bg-brand-navy text-white px-10 py-5 rounded-full font-display font-black text-sm uppercase tracking-widest hover:bg-brand-green transition-all duration-500 shadow-xl">
+            <Link to="/sobre-nos" className="group inline-flex items-center gap-4 bg-brand-navy text-white px-10 py-5 rounded-full font-display font-black text-sm uppercase tracking-widest hover:bg-brand-green transition-all duration-500 shadow-xl">
               CONHECER NOSSA HISTÓRIA <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
             </Link>
           </div>
@@ -564,15 +616,15 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { img: "https://images.unsplash.com/photo-1539635278303-d4002c07dee3?auto=format&fit=crop&w=800&q=80", caption: "Termas Ourense — Março 2025 — 34 mochileiros" },
-              { img: "https://images.unsplash.com/photo-1527631746610-bca00a040d60?auto=format&fit=crop&w=800&q=80", caption: "Ponte de Lima — Fevereiro 2025 — 42 mochileiros" },
-              { img: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=800&q=80", caption: "Noite de Samba no Porto — Janeiro 2025" },
-              { img: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80", caption: "Workshop de Integração — Dezembro 2024" },
-              { img: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80", caption: "Jantar de Natal — 80 brasileiros reunidos" },
-              { img: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80", caption: "Trilha no Gerês — Outubro 2024" },
-              { img: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&w=800&q=80", caption: "Passeio de Barco no Douro — Setembro 2024" },
-              { img: "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?auto=format&fit=crop&w=800&q=80", caption: "Visita a Braga — Agosto 2024" },
-              { img: "https://images.unsplash.com/photo-1528605248644-14dd04022da1?auto=format&fit=crop&w=800&q=80", caption: "Piquenique no Palácio de Cristal" },
+              { img: GALLERY_IMAGES.termas, caption: "Termas Ourense — Março 2025 — 34 mochileiros" },
+              { img: GALLERY_IMAGES.ponteLima, caption: "Ponte de Lima — Fevereiro 2025 — 42 mochileiros" },
+              { img: GALLERY_IMAGES.samba, caption: "Noite de Samba no Porto — Janeiro 2025" },
+              { img: GALLERY_IMAGES.workshop, caption: "Workshop de Integração — Dezembro 2024" },
+              { img: GALLERY_IMAGES.natal, caption: "Jantar de Natal — 80 brasileiros reunidos" },
+              { img: GALLERY_IMAGES.gerez, caption: "Trilha no Gerês — Outubro 2024" },
+              { img: GALLERY_IMAGES.douro, caption: "Passeio de Barco no Douro — Setembro 2024" },
+              { img: GALLERY_IMAGES.braga, caption: "Visita a Braga — Agosto 2024" },
+              { img: GALLERY_IMAGES.piquenique, caption: "Piquenique no Palácio de Cristal" },
             ].map((item, i) => (
               <motion.div 
                 key={i}
@@ -582,7 +634,12 @@ export default function Home() {
                 transition={{ delay: i * 0.05 }}
                 className="group relative aspect-square rounded-[40px] overflow-hidden shadow-2xl"
               >
-                <img src={item.img} alt={item.caption} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110" loading="lazy" />
+                <SafeImage 
+                  src={item.img} 
+                  alt={item.caption} 
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110" 
+                  fallbackSrc={`https://images.unsplash.com/photo-${i}?auto=format&fit=crop&w=800&q=80`}
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
                   <p className="text-white text-sm font-bold leading-tight">{item.caption}</p>
                 </div>
@@ -604,19 +661,35 @@ export default function Home() {
             </div>
             <h2 className="text-6xl md:text-[10vw] font-display font-black tracking-tighter uppercase leading-[0.8]">Agenda <br /><span className="text-brand-green">2026</span></h2>
             
-            <div className="py-12 space-y-6">
-              <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.4em]">Próxima Excursão em:</p>
-              <Countdown targetDate={getNextTripDate()} />
-              {trips.length > 0 && (
+            {trips.length > 0 ? (
+              <div className="py-12 space-y-6">
+                <p className="text-white/40 text-[10px] font-black uppercase tracking-[0.4em]">Próxima Excursão em:</p>
+                <Countdown targetDate={getNextTripDate()} />
                 <p className="text-brand-green font-display font-black text-2xl uppercase tracking-tighter">
                   {trips[0].destino || trips[0].titulo} — {formatDate(trips[0].dataPartida)}
                 </p>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="max-w-4xl mx-auto pt-12">
+                <div className="p-12 md:p-20 text-center bg-white rounded-[60px] border border-gray-100 shadow-xl space-y-10">
+                  <div className="w-20 h-20 bg-brand-green/10 rounded-3xl flex items-center justify-center text-brand-green mx-auto">
+                    <Calendar size={40} />
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="text-4xl font-display font-black text-brand-dark uppercase tracking-tight">AGENDA 2026 EM BREVE</h3>
+                    <p className="text-gray-500 text-xl font-medium max-w-2xl mx-auto">
+                      Estamos a preparar as melhores experiências para o próximo ano. Queres receber a agenda em primeira mão no teu e-mail?
+                    </p>
+                  </div>
+                  
+                  <AgendaLeadForm />
+                </div>
+              </div>
+            )}
           </div>
  
-          <div className="overflow-hidden rounded-[60px] border border-white/10 shadow-3xl backdrop-blur-xl bg-white/5">
-            {trips.length > 0 ? (
+          {trips.length > 0 && (
+            <div className="overflow-hidden rounded-[60px] border border-white/10 shadow-3xl backdrop-blur-xl bg-white/5">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse min-w-[800px]">
                   <thead>
@@ -635,7 +708,7 @@ export default function Home() {
                         <td className="px-12 py-10">
                           <div className="flex items-center gap-6 group/item">
                             <div className="w-16 h-20 rounded-xl overflow-hidden shadow-2xl border border-white/10 flex-shrink-0 group-hover/item:scale-110 transition-transform duration-500 relative">
-                              <img src={item.imagemUrl || `https://picsum.photos/seed/${item.destino}/400/500`} alt={item.destino} className="w-full h-full object-cover" referrerPolicy="no-referrer" loading="lazy" />
+                              <SafeImage src={item.imagemUrl || `https://picsum.photos/seed/${item.destino}/400/500`} alt={item.destino} className="w-full h-full object-cover" />
                               {item.vagasDisponiveis < 10 && item.vagasDisponiveis > 0 && (
                                 <div className="absolute inset-0 bg-brand-orange/80 flex items-center justify-center text-[8px] font-black uppercase text-white text-center p-1 leading-tight">
                                   Últimas Vagas!
@@ -687,19 +760,8 @@ export default function Home() {
                   </tbody>
                 </table>
               </div>
-            ) : (
-              <div className="p-12 md:p-24 text-center space-y-12">
-                <div className="space-y-6">
-                  <div className="text-6xl md:text-8xl">🗓️</div>
-                  <h3 className="text-3xl md:text-5xl font-display font-black uppercase tracking-tighter">Agenda em preparação</h3>
-                  <p className="text-xl text-white/60 max-w-xl mx-auto font-medium">Deixe o seu e-mail para ser avisado primeiro sobre as próximas aventuras de 2026.</p>
-                </div>
-                <div className="max-w-md mx-auto">
-                  <LeadCaptureForm id="agenda-lead" />
-                </div>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -740,12 +802,11 @@ export default function Home() {
             className="order-1 lg:order-2 relative"
           >
             <div className="absolute -inset-8 bg-white/10 rounded-[80px] -rotate-6" />
-            <img 
-              src="https://picsum.photos/seed/camila-porto-2/1000/1000" 
+            <SafeImage 
+              src={GALLERY_IMAGES.camila} 
               alt="Camila" 
               className="relative rounded-[60px] shadow-3xl border-8 border-white/10 grayscale hover:grayscale-0 transition-all duration-1000"
-              referrerPolicy="no-referrer"
-              loading="lazy"
+              fallbackSrc="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1000&q=80"
             />
           </motion.div>
         </div>
@@ -803,7 +864,7 @@ export default function Home() {
                 className="bg-white rounded-[40px] overflow-hidden shadow-xl border border-gray-100 flex flex-col"
               >
                 <div className="h-64 overflow-hidden">
-                  <img src={post.img} alt={post.title} className="w-full h-full object-cover" loading="lazy" />
+                  <SafeImage src={post.img} alt={post.title} className="w-full h-full object-cover" />
                 </div>
                 <div className="p-10 space-y-6 flex-grow flex flex-col justify-between">
                   <div className="space-y-4">

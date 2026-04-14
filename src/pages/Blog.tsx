@@ -4,7 +4,8 @@
  */
 
 import { motion } from "motion/react";
-import { Link } from "react-router-dom";
+import SafeImage from "../components/SafeImage";
+import BlogPostCard from "../components/BlogPostCard";
 import { ArrowRight, Calendar, Tag, ChevronRight, Newspaper, MessageCircle, Search } from "lucide-react";
 
 const POSTS = [
@@ -115,55 +116,16 @@ export default function Blog() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"
           >
             {POSTS.map((post, idx) => (
-              <motion.article 
-                key={idx} 
-                variants={itemVariants}
-                whileHover={{ y: -15 }}
-                className="group space-y-8 bg-white rounded-[60px] p-4 pb-12 hover:shadow-2xl transition-all duration-500 border border-transparent hover:border-brand-gray"
-              >
-                <div className="aspect-[4/3] bg-brand-gray rounded-[50px] overflow-hidden relative">
-                  <img 
-                    src={post.image} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
-                    alt={post.title} 
-                    referrerPolicy="no-referrer" 
-                  />
-                  <div className="absolute top-6 left-6">
-                    <span className="bg-white/90 backdrop-blur-md text-brand-dark px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl">
-                      {post.category}
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="px-6 space-y-6">
-                  <div className="flex items-center gap-4 text-[10px] uppercase tracking-widest font-black text-gray-400">
-                    <div className="flex items-center gap-2">
-                      <Calendar size={14} className="text-brand-green" />
-                      {post.date}
-                    </div>
-                    <div className="w-1 h-1 bg-gray-300 rounded-full" />
-                    <div className="flex items-center gap-2">
-                      <Tag size={14} className="text-brand-orange" />
-                      5 min leitura
-                    </div>
-                  </div>
-                  
-                  <h2 className="text-3xl font-display font-black text-brand-dark leading-[1.1] group-hover:text-brand-green transition-colors uppercase tracking-tighter">
-                    {post.title}
-                  </h2>
-                  
-                  <p className="text-gray-500 text-lg leading-relaxed font-medium line-clamp-3">
-                    {post.excerpt}
-                  </p>
-                  
-                  <motion.button 
-                    whileHover={{ x: 10 }}
-                    className="flex items-center gap-3 text-brand-dark font-black text-xs uppercase tracking-widest group-hover:text-brand-green transition-colors"
-                  >
-                    Ler artigo completo <ArrowRight size={18} />
-                  </motion.button>
-                </div>
-              </motion.article>
+              <BlogPostCard
+                key={idx}
+                post={{
+                  title: post.title,
+                  date: post.date,
+                  summary: post.excerpt,
+                  img: post.image,
+                  category: post.category
+                }}
+              />
             ))}
           </motion.div>
           

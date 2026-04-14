@@ -51,154 +51,116 @@ export const TESTIMONIALS = [
   },
 ];
 
-export const TUTORIALS = {
-  public: [
-    {
-      title: 'Como Obter o NIF em Portugal',
-      category: 'Documentação',
-      description: 'Guia completo passo a passo para solicitar seu Número de Identificação Fiscal. Saiba quais documentos você precisa, onde solicitar e como usar seu NIF.',
-      icon: '📋',
-      url: 'https://eportugal.gov.pt/servicos/pedir-o-numero-de-identificacao-fiscal-para-pessoa-singular',
-      details: [
-        'Documentação necessária e onde conseguir',
-        'Agendamento online na Autoridade Tributária',
-        'Prazos de processamento atualizados',
-        'Como usar seu NIF em bancos e empresas'
-      ],
-      links: [
-        { label: "Portal das Finanças", url: "https://www.portaldasfinancas.gov.pt/" },
-        { label: "Pedir NIF Online (ePortugal)", url: "https://eportugal.gov.pt/servicos/pedir-o-numero-de-identificacao-fiscal-para-pessoa-singular" },
-        { label: "Lista de Balcões AT", url: "https://info.portaldasfinancas.gov.pt/pt/dgci/servicos_at/Paginas/default.aspx" }
-      ]
-    },
-    {
-      title: 'Processo AIMA Explicado',
-      category: 'Imigração',
-      description: 'Entenda o processo de autorização de residência passo a passo: documentos, agendamento, entrevista e prazos atualizados.',
-      icon: '🏛️',
-      url: 'https://aima.gov.pt/pt',
-      details: [
-        'Documentos necessários para AIMA',
-        'Como agendar entrevista online',
-        'O que esperar na entrevista',
-        'Prazos de processamento (2026)'
-      ],
-      links: [
-        { label: "Site Oficial AIMA", url: "https://aima.gov.pt/pt" },
-        { label: "Portal de Agendamento", url: "https://aima.gov.pt/pt/agendamentos" },
-        { label: "Checklist de Documentos", url: "https://aima.gov.pt/pt/vistos-e-autorizacoes" }
-      ]
-    },
-    {
-      title: 'Cartão Porto - 22 Viagens Grátis',
-      category: 'Transportes',
-      description: 'Como obter o benefício de mobilidade gratuita no Porto para residentes. Economize no transporte público local.',
-      icon: '🚌',
-      url: 'https://cartao.porto.pt/',
-      details: [
-        'Requisitos para o Cartão Porto',
-        'Onde e como solicitar o benefício',
-        'Zonas abrangidas (Z2)',
-        'Validade e renovação anual'
-      ],
-      links: [
-        { label: "Site Cartão Porto", url: "https://cartao.porto.pt/" },
-        { label: "Rede de Transportes STCP", url: "https://www.stcp.pt/" },
-        { label: "Mapa de Zonas Andante", url: "https://linhandante.com/tarifario/" }
-      ]
-    },
-    {
-      title: 'Sistema de Saúde (SNS)',
-      category: 'Saúde',
-      description: 'Como acessar o Serviço Nacional de Saúde como imigrante. Registro no centro de saúde e obtenção do número de utente.',
-      icon: '⚕️',
-      url: 'https://www.sns.gov.pt/',
-      details: [
-        'Como se registrar no SNS',
-        'Encontrar seu médico de família',
-        'Marcar consultas e prescrições',
-        'Saúde privada vs. pública'
-      ],
-      links: [
-        { label: "Portal do SNS", url: "https://www.sns.gov.pt/" },
-        { label: "Localizador de Centros de Saúde", url: "https://www.sns.gov.pt/sns/pesquisa-de-entidades/" },
-        { label: "Guia do Utente Estrangeiro", url: "https://www.sns24.gov.pt/guia/utente-estrangeiro/" }
-      ]
-    },
-    {
-      title: 'Como obter o NISS',
-      category: 'Documentação',
-      description: 'O Número de Identificação de Segurança Social é essencial para trabalhar e contribuir em Portugal. Saiba como pedir o seu.',
-      icon: '💳',
-      url: 'https://www.seg-social.pt/pedido-de-niss',
-      details: [
-        'Documentos para cidadãos estrangeiros',
-        'Formulário online de pedido de NISS',
-        'Prazos de atribuição do número',
-        'Como consultar seu extrato de remunerações'
-      ],
-      links: [
-        { label: "Segurança Social Direta", url: "https://app.seg-social.pt/ptss/" },
-        { label: "Formulário NISS Estrangeiro", url: "https://www.seg-social.pt/pedido-de-niss" },
-        { label: "Guia Prático NISS", url: "https://www.seg-social.pt/guias-praticos" }
-      ]
-    },
-  ],
-  vip: [
-    {
-      title: 'Otimização Fiscal Avançada',
-      category: 'Impostos',
-      description: 'Estratégias legais para otimizar seus impostos. Aprenda sobre deduções, RNH e como estruturar sua declaração para economizar.',
-      icon: '💰',
-      url: 'https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Folhetos_informativos/Documents/Non_regular_residents_Tax_regime.pdf',
-      details: [
-        'Regime de Residente Não Habitual (RNH)',
-        'Deduções fiscais permitidas',
-        'Estruturação de declaração de impostos',
-        'Prazos fiscais importantes (IRS, IVA)'
-      ],
-      links: [
-        { label: "Guia RNH Oficial", url: "https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Folhetos_informativos/Documents/Non_regular_residents_Tax_regime.pdf" },
-        { label: "Simulador de IRS", url: "https://www.doutorfinancas.pt/simulador-irs-2025/" }
-      ]
-    },
-    {
-      title: 'Registro de Empresa em Portugal',
-      category: 'Negócios',
-      description: 'Guia para abrir seu próprio negócio. Tipos de empresas, registro na Conservatória e obtenção de NIF empresarial.',
-      icon: '🏢',
-      url: 'https://eportugal.gov.pt/servicos/criar-uma-empresa-na-hora',
-      details: [
-        'Tipos de empresas: Unipessoal, Lda, SA',
-        'Processo de registro na Conservatória',
-        'Abertura de conta bancária empresarial',
-        'Subsídios para novos negócios'
-      ],
-      links: [
-        { label: "Empresa na Hora", url: "https://eportugal.gov.pt/servicos/criar-uma-empresa-na-hora" },
-        { label: "Portal da Empresa", url: "https://eportugal.gov.pt/espaco-empresa" },
-        { label: "Segurança Social Direta", url: "https://app.seg-social.pt/ptss/" }
-      ]
-    },
-    {
-      title: 'Vistos de Investimento e D7',
-      category: 'Vistos',
-      description: 'Informações detalhadas sobre vistos de investimento e renda passiva. Valores mínimos, setores elegíveis e benefícios.',
-      icon: '📈',
-      url: 'https://vistos.mne.gov.pt/pt/vistos-nacionais/documentacao-instrutoria/residencia',
-      details: [
-        'Golden Visa e Visto D7',
-        'Setores elegíveis e requisitos',
-        'Benefícios de residência familiar',
-        'Caminho para cidadania portuguesa'
-      ],
-      links: [
-        { label: "Portal de Vistos MNE", url: "https://vistos.mne.gov.pt/pt/" },
-        { label: "Invest in Portugal", url: "https://www.portugalglobal.pt/PT/InvestirPortugal/Paginas/InvestirPortugal.aspx" }
-      ]
-    },
-  ],
-};
+export const ADVISORY_CATEGORIES = [
+  {
+    id: "docs",
+    name: "Documentação Essencial",
+    icon: "🗂️",
+    tutorials: [
+      { id: 1, title: "NIF – Número de Identificação Fiscal", desc: "Primeiro documento essencial para viver em Portugal. Obrigatório para quase tudo.", link: "https://portaldasfinancas.gov.pt" },
+      { id: 2, title: "NISS – Número de Identificação da Segurança Social", desc: "Número essencial para trabalhar e ter direito a benefícios sociais.", link: "https://app.seg-social.pt" },
+      { id: 3, title: "Atestado de Residência (Junta de Freguesia)", desc: "Como obter comprovativo oficial de residência na sua freguesia." },
+    ]
+  },
+  {
+    id: "health",
+    name: "Saúde e SNS",
+    icon: "🏥",
+    tutorials: [
+      { id: 4, title: "PB4 (CDAM) – Certificado de Assistência Médica", desc: "Passo a passo completo para obter o PB4 que garante acesso ao sistema de saúde português." },
+      { id: 5, title: "Número de Utente (SNS) e Inscrição no Centro de Saúde", desc: "Registo no Serviço Nacional de Saúde para ter direito aos cuidados médicos." },
+      { id: 6, title: "SNS24 – Conta e App do Serviço Nacional de Saúde", desc: "Plataforma digital para acesso aos serviços de saúde com o seu Número de Utente." },
+      { id: 7, title: "CESD – Cartão Europeu de Seguro de Doença", desc: "Cartão para segurados da Segurança Social que viajam na UE/EEE/Suíça.", link: "https://app.seg-social.pt" },
+    ]
+  },
+  {
+    id: "work",
+    name: "Trabalho e Impostos",
+    icon: "💼",
+    tutorials: [
+      { id: 8, title: "Abertura de Atividade (Trabalhador Independente)", desc: "Como abrir atividade como freelancer ou prestador de serviços." },
+      { id: 9, title: "Emprego com Contrato – Primeiros Passos", desc: "O que precisa saber ao começar a trabalhar com contrato em Portugal." },
+      { id: 10, title: "IEFP – Inscrição, Emprego e Cursos", desc: "Como se inscrever no Instituto do Emprego para procurar trabalho e acessar formação.", link: "https://www.iefp.pt" },
+      { id: 11, title: "Contabilidade Organizada vs Regime Simplificado", desc: "Guia completo para escolher o melhor regime contábil como trabalhador independente." },
+      { id: 12, title: "Declaração Trimestral de IVA", desc: "Como preencher e submeter a declaração trimestral de IVA para trabalhadores independentes.", link: "https://portaldasfinancas.gov.pt" },
+      { id: 13, title: "Dedução de Despesas Profissionais", desc: "Guia completo sobre quais despesas pode deduzir como trabalhador independente." },
+      { id: 14, title: "Certidões de Inexistência de Dívida e Parcelamento", desc: "Como obter certidões das Finanças e Segurança Social e aderir a planos de pagamento.", hasSteps: true },
+    ]
+  },
+  {
+    id: "education",
+    name: "Educação",
+    icon: "🎓",
+    tutorials: [
+      { id: 15, title: "Equivalência do Ensino Médio (12.º) em Portugal", desc: "Guia completo para obter a equivalência do diploma brasileiro ao 12.º ano português." },
+      { id: 16, title: "Reconhecimento de Diplomas de Nível Superior", desc: "Guia oficial para validar diploma universitário em Portugal através de 3 vias diferentes." },
+      { id: 17, title: "Matrícula Escolar (Pré-escolar, Básica e Secundária)", desc: "Como matricular crianças e jovens no sistema educativo português." },
+    ]
+  },
+  {
+    id: "immigration",
+    name: "Vistos e Imigração",
+    icon: "✈️",
+    tutorials: [
+      { id: 18, title: "Visto de Procura de Trabalho (120 + 60 dias)", desc: "Permite entrar e permanecer em Portugal por 120 dias para procurar emprego, prorrogáveis por mais 60 dias." },
+      { id: 19, title: "Carta Convite para Visitantes", desc: "Como fazer carta convite oficial para trazer familiares/amigos via AIMA.", link: "https://www.aima.gov.pt" },
+      { id: 20, title: "Reagrupamento Familiar", desc: "Como trazer familiares para Portugal através da AIMA com documentação completa.", link: "https://www.aima.gov.pt" },
+    ]
+  },
+  {
+    id: "transport",
+    name: "Transportes",
+    icon: "🚌",
+    tutorials: [
+      { id: 21, title: "Cartão Andante (Transportes Grande Porto)", desc: "Como obter e usar o cartão de transportes públicos da Área Metropolitana do Porto.", link: "https://www.linhandante.com" },
+      { id: 22, title: "Cartão Porto – 22 Viagens Grátis por Ano", desc: "Cartão gratuito da Câmara do Porto com 22 viagens Andante Z2 anuais para residentes.", link: "https://cartao.porto.pt" },
+      { id: 23, title: "Passe Andante Gratuito para Jovens (4–23 anos)", desc: "Passes mensais gratuitos para estudantes até 23 anos na Área Metropolitana do Porto (desde jan/2024).", link: "https://portaldomunicipe.cm-porto.pt" },
+    ]
+  }
+];
+
+export const OFFICIAL_LINKS = [
+  {
+    category: "FINANÇAS E IMPOSTOS",
+    links: [
+      { label: "Portal das Finanças", url: "https://portaldasfinancas.gov.pt" }
+    ]
+  },
+  {
+    category: "SEGURANÇA SOCIAL",
+    links: [
+      { label: "Segurança Social Direta", url: "https://app.seg-social.pt" }
+    ]
+  },
+  {
+    category: "EMPREGO E FORMAÇÃO",
+    links: [
+      { label: "IEFP", url: "https://www.iefp.pt" }
+    ]
+  },
+  {
+    category: "IMIGRAÇÃO E VISTOS",
+    links: [
+      { label: "AIMA (ex-SEF)", url: "https://www.aima.gov.pt" }
+    ]
+  },
+  {
+    category: "TRANSPORTES PORTO",
+    links: [
+      { label: "Andante / Linho Andante", url: "https://www.linhandante.com" },
+      { label: "Cartão Porto", url: "https://cartao.porto.pt" },
+      { label: "Câmara Municipal Porto", url: "https://cm-porto.pt" }
+    ]
+  },
+  {
+    category: "NOTÍCIAS / LEGISLAÇÃO",
+    links: [
+      { label: "Diário da República", url: "https://diariodarepublica.pt/dr/detalhe/lei/61-2025-941547426" },
+      { label: "Público Brasil (AIMA)", url: "https://www.publico.pt/2025/11/05/publico-brasil/noticia/aima-fechara-estrutura-missao-fim-ano-ampliara-quadro-funcionarios-2153513" },
+      { label: "O Globo (Vistos)", url: "https://oglobo.globo.com/economia/noticia/2025/11/02/quer-trabalhar-em-portugal-veja-o-que-mudou-para-brasileiros-que-querem-morar-na-terrinha.ghtml" }
+    ]
+  }
+];
 
 export const LINKS = [
   { label: "💬 Comunidade WhatsApp", url: BRAND.whatsappLink, color: "bg-brand-green" },
@@ -259,3 +221,19 @@ export const MOCHI_LEVELS = [
     unlock: "Sessão 1:1 com o fundador + 2 meses VIP grátis + nome na Parede das Lendas"
   },
 ];
+
+export const GALLERY_IMAGES = {
+  termas: '/gallery/termas.jpg',
+  ponteLima: '/gallery/ponte-lima.jpg',
+  samba: '/gallery/samba.jpg',
+  workshop: '/gallery/workshop.jpg',
+  natal: '/gallery/natal.jpg',
+  gerez: '/gallery/gerez.jpg',
+  douro: '/gallery/douro.jpg',
+  braga: '/gallery/braga.jpg',
+  piquenique: '/gallery/piquenique.jpg',
+  founders: '/founders.jpg',
+  camila: '/camila.jpg',
+  logo: '/logo.png',
+  ogImage: '/og-image.jpg',
+};

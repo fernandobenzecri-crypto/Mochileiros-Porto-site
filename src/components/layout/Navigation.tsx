@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { Link, useLocation } from "react-router-dom";
 import { BRAND } from "../../constants";
+import SafeImage from "../SafeImage";
 import { ArrowRight, Instagram, Facebook, Youtube, MessageCircle, Globe, Shield, Zap, Sparkles, Menu, X, User } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
@@ -60,11 +61,10 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <Link to="/" className="group flex items-center gap-4 relative z-[60]">
           <div className="relative">
-            <img 
+            <SafeImage 
               src={BRAND.logo} 
               alt={BRAND.name}
               className={`w-20 h-20 object-contain transition-all duration-500 ${isScrolled ? "scale-90" : "scale-110"}`}
-              referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 bg-brand-green/10 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </div>
@@ -207,11 +207,10 @@ export function Footer() {
           <div className="lg:col-span-5 space-y-12">
             <Link to="/" className="group flex items-center gap-6">
               <div className="relative">
-                <img 
+                <SafeImage 
                   src={BRAND.logo} 
                   alt={BRAND.name}
                   className="w-24 h-24 object-contain transition-transform duration-500 group-hover:scale-110"
-                  referrerPolicy="no-referrer"
                 />
               </div>
               <div className="flex flex-col">
@@ -253,7 +252,7 @@ export function Footer() {
                 <ul className="space-y-4">
                   {["Home", "Viagens", "Eventos", "Clube VIP", "Assessoria", "Parcerias"].map((link) => (
                     <li key={link}>
-                      <Link to={`/${link.toLowerCase().replace(" ", "-")}`} className="text-white/40 hover:text-white transition-colors font-bold text-sm uppercase tracking-widest">{link}</Link>
+                      <Link to={link === "Home" ? "/" : `/${link.toLowerCase().replace(" ", "-")}`} className="text-white/40 hover:text-white transition-colors font-bold text-sm uppercase tracking-widest">{link}</Link>
                     </li>
                   ))}
                 </ul>
@@ -271,9 +270,9 @@ export function Footer() {
               <div className="space-y-8 col-span-2 md:col-span-1">
                 <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-brand-orange">Comunidade</h4>
                 <ul className="space-y-4">
-                  {["Sobre Nós", "Notícias", "Links Úteis", "FAQ"].map((link) => (
+                  {["Sobre Nos", "Notícias", "Links Úteis", "FAQ"].map((link) => (
                     <li key={link}>
-                      <Link to={link === "Links Úteis" ? "/links-uteis" : `/${link.toLowerCase().replace(" ", "-")}`} className="text-white/40 hover:text-white transition-colors font-bold text-sm uppercase tracking-widest">{link}</Link>
+                      <Link to={link === "Links Úteis" ? "/links-uteis" : link === "Notícias" ? "/noticias" : `/${link.toLowerCase().replace(" ", "-")}`} className="text-white/40 hover:text-white transition-colors font-bold text-sm uppercase tracking-widest">{link}</Link>
                     </li>
                   ))}
                 </ul>
@@ -291,14 +290,9 @@ export function Footer() {
             </div>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-full border border-white/10">
-              <Shield size={14} className="text-brand-green" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-white/40">RNAVT Licenciada</span>
-            </div>
-            <div className="flex items-center gap-3 px-6 py-3 bg-white/5 rounded-full border border-white/10">
-              <Zap size={14} className="text-brand-yellow" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Secure SSL</span>
-            </div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
+              Pagamentos seguros via Stripe · Infraestrutura Google Cloud
+            </span>
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React from "react";
 import { MapPin, Euro, Edit3, Trash2, Home, Globe, Plus } from "lucide-react";
+import SafeImage from "../SafeImage";
 
 interface ContentTabProps {
   contentSubTab: "trips" | "events";
@@ -77,7 +78,7 @@ export default function ContentTab({
                   <td className="px-12 py-10">
                     <div className="flex items-center gap-4">
                       {trip.imagemUrl && (
-                        <img src={trip.imagemUrl} className="w-12 h-12 rounded-xl object-cover shadow-lg" alt={trip.titulo} />
+                        <SafeImage src={trip.imagemUrl} className="w-12 h-12 rounded-xl object-cover shadow-lg" alt={trip.titulo} />
                       )}
                       <div>
                         <div className="font-display font-black text-lg text-brand-dark uppercase tracking-tighter">{trip.titulo}</div>
@@ -173,7 +174,7 @@ export default function ContentTab({
                     <td className="px-12 py-10">
                       <div className="flex items-center gap-4">
                         {event.imagemUrl && (
-                          <img src={event.imagemUrl} className="w-12 h-12 rounded-xl object-cover shadow-lg" alt={event.titulo} />
+                          <SafeImage src={event.imagemUrl} className="w-12 h-12 rounded-xl object-cover shadow-lg" alt={event.titulo} />
                         )}
                         <div>
                           <div className="font-display font-black text-lg text-brand-dark uppercase tracking-tighter flex items-center gap-2">
